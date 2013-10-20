@@ -1,0 +1,2 @@
+﻿<%@ ServiceHost Service="JobRepo.Services.KeywordsPopularityRESTService" 
+Factory="System.ServiceModel.Activation.WebServiceHostFactory" %>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="2e950460-2dec-4e46-8bf7-e422a577e1ad" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SalarySurveyWCFSOAPService.disco" MetadataType="Disco" ID="8f3b45a8-f3e0-4372-99ca-861a1849cc55" SourceId="1" SourceUrl="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc?disco" />
+    <MetadataFile FileName="SalarySurveyService.wsdl" MetadataType="Wsdl" ID="28abbe5d-3461-4b8f-ab06-dc434cc178e4" SourceId="1" SourceUrl="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc?wsdl" />
+    <MetadataFile FileName="SalarySurveyWCFSOAPService.xsd" MetadataType="Schema" ID="c987815f-bcf0-4d3a-a1ee-6b0e0f81ef8c" SourceId="1" SourceUrl="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc?xsd=xsd1" />
+    <MetadataFile FileName="SalarySurveyWCFSOAPService1.xsd" MetadataType="Schema" ID="55887aa3-2c8f-4569-8bbb-8f0b1411dfa0" SourceId="1" SourceUrl="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc?xsd=xsd0" />
+    <MetadataFile FileName="SalarySurveyWCFSOAPService2.xsd" MetadataType="Schema" ID="8546f5c8-252c-419d-8a47-1871650607ba" SourceId="1" SourceUrl="http://localhost:59461/JobRepoServicesHost/SalarySurveyWCFSOAPService.svc?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

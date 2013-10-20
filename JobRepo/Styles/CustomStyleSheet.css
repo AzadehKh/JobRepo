@@ -1,0 +1,28 @@
+﻿body {
+}
+
+span.blink
+{
+    font-family: 'Times New Roman' , Times, serif;
+    font-size: large;
+    font-weight: bold;
+    color: #FF0000;
+     margin-left:15;
+      margin-right:15;
+      
+}
+
+
+.Password_Weak
+{
+border: thin solid #FF0000;
+}
+.Password_Medium
+{
+    border: thin solid #0000FF;
+}
+.Password_Strong
+{
+border: medium solid #008000;
+}
+
