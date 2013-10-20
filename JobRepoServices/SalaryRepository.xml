@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Salaries>
+  <Salary>
+    <Role>Project Director/Programme Manager</Role>
+    <MinSalary>120K</MinSalary>
+    <MaxSalary>160K</MaxSalary>
+    <AverageSalary>140K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Project Manager</Role>
+    <MinSalary>90K</MinSalary>
+    <MaxSalary>110K</MaxSalary>
+    <AverageSalary>100K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Business Analyst</Role>
+    <MinSalary>70K</MinSalary>
+    <MaxSalary>90K</MaxSalary>
+    <AverageSalary>80K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Architect - Solutions/Enterprise/Technical</Role>
+    <MinSalary>100K</MinSalary>
+    <MaxSalary>180K</MaxSalary>
+    <AverageSalary>140K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Software Developer/Engineer</Role>
+    <MinSalary>60K</MinSalary>
+    <MaxSalary>100K</MaxSalary>
+    <AverageSalary>80K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Database Administrator</Role>
+    <MinSalary>60K</MinSalary>
+    <MaxSalary>100K</MaxSalary>
+    <AverageSalary>80K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Tester</Role>
+    <MinSalary>60K</MinSalary>
+    <MaxSalary>90K</MaxSalary>
+    <AverageSalary>75K</AverageSalary>
+  </Salary>
+  <Salary>
+    <Role>Network Engineer</Role>
+    <MinSalary>60K</MinSalary>
+    <MaxSalary>100K</MaxSalary>
+    <AverageSalary>80K</AverageSalary>
+  </Salary>
+
+</Salaries>
