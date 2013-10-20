@@ -1,0 +1,851 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'>The following methods and features have been used for authentication and authorisation in JobRepo:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. Using SSL: </h4>
+
+JonRepo has been configured to use SSL but SSL needs a certificate token so this feature has been disabled
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+    <authentication mode="Forms">
+      <!--<forms loginUrl="~/Account/Login.aspx" protection="All" requireSSL="true" timeout="2880" />-->
+      <forms loginUrl="~/Account/Login.aspx" protection="All" timeout="2880" />
+    </authentication>
+
+]]></script>
+
+<h4>2. Access rules for folder(s): </h4>
+
+(This approach can be used just for folders)
+
+Those pages which need to be accessible by administrator are located under Administrator folder and a separate Web.config has been added to this folder with the following Access Rules:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <system.web>
+        <authorization>
+            <allow roles="Administrators" />
+            <deny users="*" />
+        </authorization>
+    </system.web>
+</configuration>
+]]></script>
+  	
+<h4>3. Access Restrictions for file(s)/folder(s): </h4>
+
+This approach can be used for both files and folders but since Access rule approach was used for folders, this approach has been used for files only
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<location path="JobList.aspx">
+    <system.web>
+      <!--<authentication mode="Forms">
+      <forms loginUrl="~/Account/Login.aspx" requireSSL="true" protection="All"  timeout="2880" />
+    </authentication>-->
+      <authorization>
+        <deny users="?" />
+      </authorization>
+    </system.web>
+  </location>
+  <location path="Services/TopTenWcfDataService.svc">
+    <system.web>
+      <authorization>
+        <allow users="*" />
+      </authorization>
+    </system.web>
+  </location>
+ ]]></script>
+
+ 
+<h4>4. Site.unaturise.master: </h4>
+
+Some pages and service like Top10Job WCD Data service fails for unauthrozied users so a new master page named "site.unaturise.master" has been created for those which doesn't need the user to be logged in first
+<br/>
+<br/>
+In the meantime, Site.Master has been changed to be a nested master page
+
+  	
+<h4>5. Redirect after login: </h4>
+
+Login.aspx accepts a query string parameter "ReturnUrl" , which can be set like below:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+<span>If you are a new user , Please complete the following information otherwise click
+        <asp:LinkButton ID="LinkButton1" runat="server" 
+        PostBackUrl="~/Account/Login.aspx?ReturnUrl=%2fEmployerProfile.aspx"> here</asp:LinkButton>
+        &nbsp; to login in order to post your job advertisements<br />
+        &nbsp;</span>
+ ]]></script>
+
+ <h4>6. Config Membership properties via Web.Config: </h4>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<membership>
+      <providers>
+        <clear />
+        <add name="AspNetSqlMembershipProvider" type="System.Web.Security.SqlMembershipProvider" 
+             connectionStringName="LocalSqlServer" 
+             enablePasswordRetrieval="false" 
+             enablePasswordReset="true" 
+             requiresQuestionAndAnswer="false" 
+             requiresUniqueEmail="false" 
+             maxInvalidPasswordAttempts="5" 
+             minRequiredPasswordLength="5" 
+             minRequiredNonalphanumericCharacters="0" 
+             passwordAttemptWindow="10" 
+             applicationName="/" />
+      </providers>
+    </membership>
+ ]]></script>
+
+and these properties can be used through the membership class either from the code behind or form the aspx (html tag) like:
+
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#MainContent_MainContent_txtUsername").keyup(function () {
+         
+                //Using custom attribute for textbox 
+                /*
+                Please notice that using so many custom att(s) is not recommended 
+                as it causes memory leak issues
+                */
+                $(this).attr("isvalid", function () { return false; });
+
+                $("#ValidationInfo").html("");
+                var username = $(this).val();
+                var minlen = 5; //parseInt("<%= Membership.MinRequiredPasswordLength %>");
+                if (username.length < parseInt("<%= Membership.MinRequiredPasswordLength %>")) return;
+
+                $("#ValidationInfo").html("Checking Username Availability ....");
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "Services/UserNameValidationService.asmx/IsValidUserName",
+                    data: "{'username': '" + username + "'}",
+                    success: function (data) {
+
+
+                        $("#MainContent_MainContent_txtUsername").attr("isvalid", function () { return data.d; })
+
+                        if (data.d == true) {
+
+                            $("#ValidationInfo").css("color", "Green");
+                            $("#ValidationInfo").html("Username is available");
+                        }
+                        else {
+
+                            $("#ValidationInfo").css("color", "Red");
+                            $("#ValidationInfo").html("Username is not available");
+                        }
+                    },
+                    error: function () {
+                        alert("Error calling the web service.");
+                    }
+                });
+            }
+             );
+ ]]></script>
+ 
+ or as web serviceusing 
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+    [WebService(Namespace = "http://www.JobPro.com/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    [System.Web.Script.Services.ScriptService]
+    public class UserNameValidationService : System.Web.Services.WebService
+    {
+       
+        [WebMethod]
+        public bool IsValidUserName(string username)
+        {
+            
+            bool isvalid = false;
+
+
+            if (username != "" && username.Length >= Membership.MinRequiredPasswordLength)
+            {
+                using (JobRepoDataContext context = new JobRepoDataContext())
+                {
+
+                    var query = from MembershipUser user in Membership.GetAllUsers()
+                                //Notice that you  cannot user Lambda where .Where ( e => e. ....) 
+                                //instead , you need to use by LINQ Where operator: where user.....
+                                where user.UserName.ToUpper().Equals(username.ToUpper()) 
+                                select user;
+                                
+
+                    //IQueryable is not serializable so if we need to return the result ,
+                    //it should be returned as list :  query.ToList();
+                    isvalid = (query.Count() == 0);
+
+                }
+            }
+            return isvalid;
+            
+        }
+    }
+}
+ ]]></script>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+ 
+         $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            url: "Services/UserNameValidationService.asmx/IsValidUserName",
+            data: "{'username': '" + strInput + "'}",
+            success: function (data) {
+
+                // this.raiseEvent() doesn't work here 
+                //as we don't have access to the parent class here directly so we need to use $t
+                //debugger;
+                // $t.trigger('raisevalidated', true);
+                $t.raisevalidated(data.d);
+
+
+            },
+            error: function () {
+                alert("Error calling the web service.");
+            }
+        });
+ ]]></script>
+ 
+ 
+ or 
+ 
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+ 
+     <p>
+        New passwords are required to be a minimum of
+        <%= Membership.MinRequiredPasswordLength %>
+        characters in length.
+    </p>
+	
+	 ]]></script>
+	 
+<b>Notice that"" is not needed if the string is in middle of a Html line above</b>
+
+
+ <h4>7. Assgin a user to a role: </h4>
+After creating a new user, the user is not a member of any role (even if the user is  created by Asp.NET Register page Register.aspx) so this assignment has been done in code-behind as final step of Adding a new user
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+ 
+            //Add user to the role 'Members'
+            Roles.AddUserToRole(RegisterUser.UserName, "Members");
+
+	
+	 ]]></script>
+
+ <h4>8. Security Questions: </h4>
+
+By default , These information are not n aspsdb database (generated by .NET) , they should be added /saved to the database as Profile for each individual  user separately 
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+ 
+        protected void RegisterUser_FinishButtonClick(object sender, WizardNavigationEventArgs e)
+        {
+
+            //save Security Questions in Profile:
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            profile.SecurityQuestions.Question1 = txtQuestion1.Text;
+            profile.SecurityQuestions.Answer1 = txtAnswer1.Text;
+            profile.SecurityQuestions.Question2 = txtQuestion2.Text;
+            profile.SecurityQuestions.Answer2 = txtAnswer2.Text;
+            profile.Save();
+
+
+            string continueUrl = RegisterUser.ContinueDestinationPageUrl;
+            if (String.IsNullOrEmpty(continueUrl))
+            {
+                continueUrl = "~/";
+            }
+            Response.Redirect(continueUrl);
+        }
+	
+	 ]]></script>
+
+ A NEW Class/object has been added :
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+   [Serializable]
+   public class SecurityQuestionsGroup 
+   {
+       public SecurityQuestionsGroup()
+       {
+       }
+
+
+       [CustomProviderData("Question1;nvarchar")]
+       public virtual string Question1 { get; set; }
+       [CustomProviderData("Answer1;nvarchar")]
+       public virtual string Answer1 { get; set; }
+       [CustomProviderData("Question2;nvarchar")]
+       public virtual string Question2 { get; set; }
+       [CustomProviderData("Answer2;nvarchar")]
+       public virtual string Answer2 { get; set; }
+   }
+	
+	 ]]></script>
+This object has been added to CommonProfile as a new property , which can be fetched and saved like other profiler information
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+ 
+    public class ProfileCommon : ProfileBase
+    {
+         [SettingsAllowAnonymous(false)]
+         public SecurityQuestionsGroup SecurityQuestions 
+         {
+             get
+             {
+                    return (SecurityQuestionsGroup)(this.GetPropertyValue("SecurityQuestions"));
+             }
+
+             set
+             {
+
+                 this.SetPropertyValue("SecurityQuestions", value);
+
+             }
+         }
+	 ]]></script>
+	 
+	 
+ <h4>9. Custom Register Page: </h4>
+
+Membership and role classes have been used for the following purposes:
+Create users and assigning them to roles as well as saving other profile information
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+ 
+        protected void objDsEmployer_Inserting(object sender, ObjectDataSourceMethodEventArgs e)
+        {
+            Employer item = (Employer)e.InputParameters[0];
+            bool UserCreated = true;
+
+
+
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            profile.SecurityQuestions.Question1 = txtQuestion1.Text;
+            profile.SecurityQuestions.Answer1 = txtAnswer1.Text;
+            profile.SecurityQuestions.Question2 = txtQuestion2.Text;
+            profile.SecurityQuestions.Answer2 = txtAnswer2.Text;
+            try
+            {
+                profile.Save();
+
+            }
+            catch
+            {
+                UserCreated = false;
+            }
+
+            if (UserCreated)
+            {
+                item.UserID = new Guid(Membership.GetUser().ProviderUserKey.ToString());
+                saveImage(item);
+            }
+            else
+                e.Cancel = true;
+        }
+		
+		
+		
+        protected void objDsEmployer_Inserted(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            Session["EmployerID"] = e.ReturnValue;
+            //DetailsView Select Event has not been raised after submit/postback 
+            //so we need the following code to force the ASP.NET to fetch data again
+            Response.Redirect("EmployerProfile.aspx");
+
+        }
+		
+	 ]]></script>
+	 
+	and some client side custom validation ( jQuery) have been applied as well: 
+	
+	
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+	 
+	 <s type="text/javascript">
+        $(document).ready(function () {
+            $("#MainContent_MainContent_txtUsername").keyup(function () {
+         
+                //Using custom attribute for textbox 
+                /*
+                Please notice that using so many custom att(s) is not recommended 
+                as it causes memory leak issues
+                */
+                $(this).attr("isvalid", function () { return false; });
+
+                $("#ValidationInfo").html("");
+                var username = $(this).val();
+                var minlen = 5; //parseInt("<%= Membership.MinRequiredPasswordLength %>");
+                if (username.length < parseInt("<%= Membership.MinRequiredPasswordLength %>")) return;
+
+                $("#ValidationInfo").html("Checking Username Availability ....");
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "Services/UserNameValidationService.asmx/IsValidUserName",
+                    data: "{'username': '" + username + "'}",
+                    success: function (data) {
+
+
+                        $("#MainContent_MainContent_txtUsername").attr("isvalid", function () { return data.d; })
+
+                        if (data.d == true) {
+
+                            $("#ValidationInfo").css("color", "Green");
+                            $("#ValidationInfo").html("Username is available");
+                        }
+                        else {
+
+                            $("#ValidationInfo").css("color", "Red");
+                            $("#ValidationInfo").html("Username is not available");
+                        }
+                    },
+                    error: function () {
+                        alert("Error calling the web service.");
+                    }
+                });
+            }
+             );
+
+            $("#MainContent_MainContent_txtPassword").keyup(function () {
+
+
+                var validator = new JobRepo.PasswordStrengthValidationComponent();
+                //var pass = document.getElementById("MainContent_MainContent_txtPassword").value;
+                var pass = $(this).val();
+                var strength = validator.CheckPasswordStrength(pass);
+                //document.getElementById("MainContent_MainContent_lblPasswordStrength").innerText = strength;
+                // either MainContent_lblPasswordStrength or <%=lblPasswordStrength.ClientID%> can be used
+                $("#<%=lblPasswordStrength.ClientID%>").html(strength);
+
+
+
+                if (strength == "Weak") {
+                    $("#<%=lblPasswordStrength.ClientID%>").css("color", "Red");
+                    $("#MainContent_MainContent_txtPassword").addClass("Password_Weak");
+                }
+                else
+                    if (strength == "Medium") {
+                        $("#<%=lblPasswordStrength.ClientID%>").css("color", "Blue");
+                        $("#MainContent_MainContent_txtPassword").addClass("Password_Medium");
+                    }
+                    else {
+                        $("#<%=lblPasswordStrength.ClientID%>").css("color", "Green");
+                        $("#MainContent_MainContent_txtPassword").addClass("Password_Strong");
+                    }
+            });
+
+            $("#MainContent_MainContent_dvwEmployer_btnShowLogo").click(function () {
+
+
+                if ($(this).attr("value") == "Show the saved logo") {
+                    $("#gd").show("slow");
+                    $(this).attr("value", "Close");
+                }
+                else {
+                    $(this).attr("value", "Show the saved logo");
+                    $("#gd").hide("slow");
+
+                }
+            });
+
+        });
+
+    </s>
+    <s language="javascript" type="text/javascript">
+        function Check4UserNameAvailability(source, arguments) {
+
+            var data = arguments.Value.split('');
+            arguments.IsValid = false;
+
+            if (data.length < parseInt("<%= Membership.MinRequiredPasswordLength %>")) return;
+
+            if ($("#MainContent_MainContent_txtUsername").attr("isvalid") == "false")
+                return;
+
+            arguments.IsValid = true;
+
+        }
+    </s>
+	
+ 	 ]]></script>
+
+and to redirect from the register page to the prevoius page:
+
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        protected void RegisterUser_FinishButtonClick(object sender, WizardNavigationEventArgs e)
+        {
+
+            //save Security Questions in Profile:
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            profile.SecurityQuestions.Question1 = txtQuestion1.Text;
+            profile.SecurityQuestions.Answer1 = txtAnswer1.Text;
+            profile.SecurityQuestions.Question2 = txtQuestion2.Text;
+            profile.SecurityQuestions.Answer2 = txtAnswer2.Text;
+            profile.Save();
+
+
+            string continueUrl = RegisterUser.ContinueDestinationPageUrl;
+            if (String.IsNullOrEmpty(continueUrl))
+            {
+                continueUrl = "~/";
+            }
+            Response.Redirect(continueUrl);
+        }
+ 	 ]]></script>
+	 
+<b>Notice that RegisterUser_FinishButtonClick() is called by Wizard as last step of the registration </b>
+	 	 
+The user can be created by using Regaister.aspx or alertenatviley it can be created via EmployeeProfiler(JobSeekerProfiler)  and EmployerProfile.aspx for that two ,CreateUser() has been implemented to Create an user/assign them to roles and saving other profile information.
+
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	 
+      public static bool CreateUser(string username
+            ,string password , string recoveryEmail
+            , string question1, string answer1, string question2, string answer2)
+        {
+            bool UserCreated = true;
+            MembershipUser user = null;
+
+
+            if (HttpContext.Current.Session["UserID"] == null)
+            {
+                if (Membership.GetUser(username) == null)
+                {
+                    user = Membership.CreateUser(username,
+                       password,
+                       recoveryEmail);
+
+                    if (user != null)
+                    {
+                        Roles.AddUserToRole(username, "Members");
+                        /*We need the following method to execute otherwise the 
+                         * logged in user won't be Initialized correctly
+                        */
+                        Common.InitializeUser(username, HttpContext.Current);
+
+                        ProfileCommon profile = ProfileCommon.GetProfile();
+                        profile.SecurityQuestions.Question1 = question1;
+                        profile.SecurityQuestions.Answer1 = answer1;
+                        profile.SecurityQuestions.Question2 = question2;
+                        profile.SecurityQuestions.Answer2 = answer2;
+                        profile.Save();
+
+                        HttpContext.Current.Session["UserID"] = user.ProviderUserKey;
+
+                    }
+                    else
+                    {
+                        UserCreated = false;
+                    }
+                }
+                else // The user has already been created but some information like below can be updated
+                {
+                    ProfileCommon profile = ProfileCommon.GetProfile();
+                    profile.SecurityQuestions.Question1 = question1;
+                    profile.SecurityQuestions.Answer1 = answer1;
+                    profile.SecurityQuestions.Question2 = question2;
+                    profile.SecurityQuestions.Answer2 = answer2;
+                    profile.Save();
+
+                    HttpContext.Current.Session["UserID"] = Membership.GetUser(username).ProviderUserKey;
+                }
+
+            }
+
+            return UserCreated;
+        }	 
+	 	 ]]></script> 
+		 
+ <h4>10. InitializeUser: </h4>
+	 This method should be called from any pages that the user can be logged in the system ( Login - Register -EmployeeProfile - EmployerProfile)	
+	 
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	 
+	 <Employer> emps = employerprofile.GetProfile(Membership.GetUser(username).ProviderUserKey.ToString());
+                Employer employer = emps.FirstOrDefault();
+                if (employer != null)
+                    context.Session["EmployerID"] = employer.EmployerID;
+            }
+
+            using (EmployeeProfileObject Employeeprofile = new EmployeeProfileObject())
+            {
+                IEnumerable<Employee> empees = Employeeprofile.GetProfile(Membership.GetUser(username).ProviderUserKey.ToString());
+                Employee Employee = empees.FirstOrDefault();
+                if (Employee != null)
+                    context.Session["EmployeeID"] = Employee.EmployeeID;
+            }
+        }
+
+ 	 ]]></script>
+
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        protected void LoginUser_LoggedIn(object sender, EventArgs e)
+        {
+            /*We need the following method to execute otherwise the 
+             * logged in user won't be Initialized correctly
+            */
+            Common.InitializeUser(LoginUser.UserName, Context);
+        }
+		 	 ]]></script>
+
+ <h4>11. GetNumberOfUsersOnline: </h4>			 
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	 
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            /*
+            notice that GetNumberOfUsersOnline() shows the logged in users only 
+             * and it doesn't have any info about the guest users.
+             * another problem about the method is that it doesn't decrease the number 
+             * when the user logs out so the number is not accurate.
+             * to fix this problem there are some few solutions explained here:
+                http://weblogs.asp.net/davidyancey/
+             * and here:
+             * http://stackoverflow.com/questions/11446036/membership-getnumberofusersonline-does-not-return-correct-values
+             
+             */
+            UsersOnlineLabel.Text = Membership.GetNumberOfUsersOnline().ToString();
+        }
+	 
+ 	 ]]></script>
+ <h4>12. Custome changing password: </h4>			 
+ 
+ It is asking for the security questions before changing password and to do that , It is  suing SecurityCheckService which is a web service :
+
+
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+	 
+	 <s language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer1").keyup(function () {
+
+                //Using custom attribute for textbox 
+                /*
+                Please notice that using so many custom att(s) is not recommended 
+                as it causes memory leak issues
+                */
+                $(this).attr("isvalid", function () { return false; });
+
+
+                var answer = $(this).val();
+
+
+                $("#ValidationInfo1").html("Checking Security Question ....");
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "../Services/SecurityCheckService.asmx/IsValidAnswerToQuestion1",
+                    data: "{'Answer1': '" + answer + "'}",
+                    success: function (data) {
+                        $("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer1").attr("isvalid", function () { return data.d; })
+                        $("#ValidationInfo1").html("");
+                    },
+                    error: function () {
+                        $("#ValidationInfo1").html("");
+                        alert("Error calling the web service for quesiton1.");
+                    }
+                });
+            });
+
+            $("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer2").keyup(function () {
+
+                //Using custom attribute for textbox 
+                /*
+                Please notice that using so many custom att(s) is not recommended 
+                as it causes memory leak issues
+                */
+                $(this).attr("isvalid", function () { return false; });
+
+
+                var answer = $(this).val();
+
+
+                $("#ValidationInfo2").html("Checking Security Question ....");
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "../Services/SecurityCheckService.asmx/IsValidAnswerToQuestion2",
+                    data: "{'Answer2': '" + answer + "'}",
+                    success: function (data) {
+                        $("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer2").attr("isvalid", function () { return data.d; })
+                        $("#ValidationInfo2").html("");
+                    },
+                    error: function () {
+                        $("#ValidationInfo2").html("");
+                        alert("Error calling the web service for quesiton2.");
+                    }
+                });
+            });
+
+        });
+
+    </s>
+    <s language="javascript" type="text/javascript">
+        function CheckSecurity1(source, arguments) {
+
+            var data = arguments.Value.split('');
+            arguments.IsValid = false;
+
+            if ($("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer1").attr("isvalid") == "false")
+                return;
+
+            arguments.IsValid = true;
+
+        }
+        function CheckSecurity2(source, arguments) {
+
+            var data = arguments.Value.split('');
+            arguments.IsValid = false;
+
+            if ($("#MainContent_ChangeUserPassword_ChangePasswordContainerID_txtAnswer2").attr("isvalid") == "false")
+                return;
+
+            arguments.IsValid = true;
+
+        }
+    </s>
+ 	 ]]></script>
+and the web service:
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	 
+	    [WebService(Namespace = "http://www.JobPro.com/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    [System.Web.Script.Services.ScriptService]
+    public class SecurityCheckService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public bool IsValidAnswerToQuestion1(string Answer1)
+        {
+
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            string OriANswer = profile.SecurityQuestions.Answer1.ToLower();
+            bool Equals =false;
+            if (OriANswer != "")
+                Equals = OriANswer.Equals(Answer1.ToLower());
+
+            return Equals;
+
+        }
+
+
+        [WebMethod]
+        public bool IsValidAnswerToQuestion2(string Answer2)
+        {
+
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            string OriANswer = profile.SecurityQuestions.Answer2.ToLower();
+            bool Equals = false;
+            if (OriANswer != "")
+                Equals = OriANswer.Equals(Answer2.ToLower());
+
+            return Equals;
+
+        }
+    }
+ 	 ]]></script>
+	 
+ <h4>13. Loggedout Event: </h4>		
+ Loggedout event of login status has been used to clear all session variables: 
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+	 <asp:LoginStatus ID="HeadLoginStatus" runat="server" LogoutAction="Redirect" LogoutText="Log Out"
+                            LogoutPageUrl="~/" OnLoggedOut="HeadLoginStatus_LoggedOut" />
+	 
+ 	 ]]></script>
+
+	 <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	 
+        protected void HeadLoginStatus_LoggedOut(object sender, EventArgs e)
+        {
+            Session["UserID"] = null;
+            Session["EmployerID"] = null;
+            Session["JobID"] = null;
+
+            Session["EmployeeID"] = null;
+
+            Session.Abandon();
+
+            FormsAuthentication.SignOut();
+        }
+]]></script>
+			 
+			 
+<b>Notice that logoutpageurl is set to "~/" which means: go to the root ( web site) and then .NET shows the page which is "set as default page"</b>
+	
+		 
+ <h4>14. re-defined UserNames and  Password: </h4>				 
+
+<table border="1"  width="100%">
+  <tr><!-- Row 1 -->
+     <td>UserName</td><!-- Col 1 -->
+     <td>Password</td><!-- Col 2 -->
+     <td>Role(s)</td><!-- Col 3 -->
+     <td></td><!-- Col 4 -->
+  </tr>  <tr><!-- Row 1 -->
+     <td>JRadmin</td><!-- Col 1 -->
+     <td>JRadmin</td><!-- Col 2 -->
+     <td>Administrator, Member</td><!-- Col 3 -->
+     <td>(Employer)</td><!-- Col 4 -->
+  </tr>
+  <tr><!-- Row 2 -->
+     <td>JRmember</td><!-- Col 1 -->
+     <td>JRmember</td><!-- Col 2 -->
+     <td>Member</td><!-- Col 3 -->
+     <td>(Employee)</td><!-- Col 4 -->
+  </tr>
+</table>
+<br/>
+<br />
+<b>Notice that If the new user added to the system via JobRepo needs to be Administrator, it should be done through 
+ASP.NET Configuration via Visual Studio (Project\ ASP.NET Configuration)</b>
+ 
+
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b> ASP.NET Dynamic Data<span lang="en-au"></b>
+those lookup tables which needs to be maintained by Administrator like ( City , Country and etc.):          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. Routing : </h4>
+
+
+DynamicData is using Routing so the following code should be added to Global.asax :
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+
+
+            //if we want  JUST those table which [ScaffoldTable] BeginEventHandler accessible/changeable/addale/.. 
+            //    via Dynamicdata , this property should be  set “false” 
+            //See JobRepoModelExtended.cs to see which tables are accessible via Dynamicdata
+            DefaultModel.DynamicDataFolderVirtualPath = "~/Administration/DynamicData/";
+            if (DefaultModel.Tables.Count == 0)
+                DefaultModel.RegisterContext(typeof(JobRepoDataContext),
+                new ContextConfiguration() { ScaffoldAllTables = false });
+]]></script>
+
+Notice that ScaffoldAllTables = false and it means those tables which are marked to be accessible via  DynamicData , this tables have been defined as below:
+
+
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+namespace JobRepo.Model
+{
+
+     /*
+       To control scaffolding for individual tables, partial class for those tables which need to be data entried through 
+      ASP.NET Dynamic Data has been added and also [ScaffoldTable(true)] attribute has been applied to the partial classes.
+     */
+
+    [ScaffoldTable(true)]
+    public partial class Location
+    {
+    }
+
+    [ScaffoldTable(true)]
+    public partial class Country
+    {
+    }
+
+    [ScaffoldTable(true)]
+    public partial class City
+    {
+    }
+
+    [ScaffoldTable(true)]
+    public partial class Province
+    {
+
+    }
+
+  ]]></script>
+  
+  
+ DynamicData folder is located under Administration folder and its access level will be handled by the web.config defined under administrator ( Access Rules Approache has been used for this folder ):
+ 
+  
+<script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <system.web>
+        <authorization>
+            <allow roles="Administrators" />
+            <deny users="*" />
+        </authorization>
+    </system.web>
+</configuration>
+  ]]></script>
+  	
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

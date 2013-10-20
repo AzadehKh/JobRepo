@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>SalarySurvay<span lang="en-au">
+</span></b><span lang="en-au">is a <strong>WCF Service</strong> whitch be</span>nefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<a href="index.html">Go to Home </a> </p>
+
+<h4>1. Using Fast and more interoperabilt Service</h4>
+
+	1-	Limit protocol to HTTP to cover more clients as well as more reliable peotocol
+	<br />
+	2-	Avoid Reliable messaging and Transactions ( which are both  Ws-*) and also avoid message level security
+	<br />
+	3-	Per-call instancing
+	<br />
+	4-	Avoid System.data.dataset and using Array 
+	<br />
+	
+<h4>2. Embeded XML(Resource)</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall,
+    ConcurrencyMode = ConcurrencyMode.Multiple)]
+    public class SalarySurveyService : ISalarySurveyService
+    {
+
+
+        public IEnumerable<SalarySurvey> FetchSalaries()
+        {
+
+            XElement _Xml = XElement.Load(Assembly.GetExecutingAssembly()
+    .GetManifestResourceStream("JobRepoServices.SalaryRepository.xml"));
+
+            var advQuery =
+            from adv in _Xml.Descendants("Salary")
+            orderby adv.Element("Role").Value
+            select new SalarySurvey
+            {
+
+                Role = adv.Element("Role").Value,
+                MinSalary = adv.Element("MinSalary").Value,
+                MaxSalary = adv.Element("MaxSalary").Value,
+                AverageSalary = adv.Element("AverageSalary").Value
+
+            };
+
+            return advQuery;
+        }
+        public SalarySurvey[] GetAllRoles()
+        {
+            return FetchSalaries().ToArray();
+        }
+
+        public SalarySurvey[] GetRole(string role)
+        {
+            return FetchSalaries()
+                .Where(e => e.Role.Contains(role))
+                    .ToArray();
+        }
+
+
+    }
+
+]]></script>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+    [DataContract]
+    public class SalarySurvey
+    {
+
+        string _Role = "";
+        [DataMember]
+        public string Role
+        {
+            get { return _Role; }
+            set { _Role = value; }
+        }
+
+
+        string _MinSalary = "";
+        [DataMember]
+        public string MinSalary
+        {
+            get { return _MinSalary; }
+            set { _MinSalary = value; }
+        }
+
+        string _MaxSalary = "";
+        [DataMember]
+        public string MaxSalary
+        {
+            get { return _MaxSalary; }
+            set { _MaxSalary = value; }
+        }
+
+        string _AverageSalary = "";
+        [DataMember]
+        public string AverageSalary
+        {
+            get { return _AverageSalary; }
+            set { _AverageSalary = value; }
+        }
+    }
+
+]]></script>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    [ServiceContract]
+    public interface ISalarySurveyService
+    {
+        [OperationContract]
+        SalarySurvey[] GetAllRoles();
+
+        [OperationContract]
+        SalarySurvey[] GetRole(string role);
+         
+
+    }
+]]></script>
+
+
+
+<h4>3. Custom Binding</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+
+  <system.web>
+    <compilation debug="true" targetFramework="4.0"/>
+  </system.web>
+  <!-- When deploying the service library project, the content of the config file must be added to the host's 
+  app.config file. System.Configuration does not support config files for libraries. -->
+  <system.serviceModel>
+    <services>
+      <service name="JobRepoServices.SalarySurveyService" behaviorConfiguration="SalarySurveyServiceBehaviors">
+          <endpoint address="" binding="basicHttpBinding" contract="JobRepoServices.ISalarySurveyService"
+          bindingConfiguration="TransportSecurity">
+          <!--<identity>
+            <dns value="localhost" />
+          </identity-->
+        </endpoint>
+        <endpoint name ="mex" address="mex" binding="mexHttpBinding" contract="IMetadataExchange"/>
+        <!--<host>
+          <baseAddresses>
+            <add baseAddress="http://localhost:8080/JobRepo/SalarySurveyService" />
+          </baseAddresses>
+        </host>-->
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="SalarySurveyServiceBehaviors">
+          <!-- To avoid disclosing metadata information, 
+          set the value below to false and remove the metadata endpoint above before deployment -->
+          <serviceMetadata httpGetEnabled="true"/>
+          <!-- To receive exception details in faults for debugging purposes, 
+          set the value below to true.  Set to false before deployment 
+          to avoid disclosing exception information -->
+          <!--<serviceDebug includeExceptionDetailInFaults="False"/>-->
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+    <bindings>
+      <basicHttpBinding>
+        <!--
+          To enable SSL for basicHttp binding which does not have any security by default :
+          for more information : http://cgeers.com/2012/01/30/enabling-ssl-for-a-wcf-service/ 
+          -->
+        <binding name="TransportSecurity">
+          <!--Transport security means securing your channel with SSL and hence you would need a certificate. 
+                If you dont want to use SSL but want to pass username password over the channel then you can use ClearUsernameBinding that sends the username password over the channel in clear text. 
+                NOTE: Make sure you use this only when you are confident that you client and server channel is secure like behind a firewall that provides security.
+                http://stackoverflow.com/questions/10631215/could-not-find-a-base-address-that-matches-scheme-https-for-the-endpoint-with-bi
+             
+              <security mode="Transport"> 
+                <transport clientCredentialType="None" /> 
+              </security> 
+              -->
+        </binding>
+      </basicHttpBinding>
+    </bindings>
+  </system.serviceModel>
+]]></script>
+
+Please notice to the comments added to the configs
+
+<h4>4. WebSite as host</h4>
+
+A Website is using a SVC file to host the WCF service has been used and a console client to test the WCF service has been added as well.
+<br />
+<h4>5. Custom WCF Service through the Code behind</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+
+            using (SalarySurveyServiceClient client = new SalarySurveyServiceClient())
+            {
+                grdGuide.DataSource =client.GetAllRoles();
+                grdGuide.DataBind();
+
+                client.Close();
+                
+            }
+             
+        }
+]]></script>
+Notice that the client needs to use "Add Service Reference" to get the proxy as well as the Configuration settings
+<h4>6. Dispose return value a JavaScript function</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+<p id="Header" >
+Salary-Guide-<script type="text/javascript">document.write(new Date().getFullYear());</scripts>
+</p>
+]]></script>
+
+<br />
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

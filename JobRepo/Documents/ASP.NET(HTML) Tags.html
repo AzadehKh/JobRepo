@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>ASP.NET(HTML) Tags :<span lang="en-au"></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+	<script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[<% %> Evaluated Code Blocks(C# code) ]]></script>
+
+It is mostly used in ASP.NET MVC where we you just want to display some values and data-binding syntax is not needed
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%
+string message = "Hello World!";
+Response.Write(message);
+%>
+
+  ]]></script>
+
+But there is a shortcut for using Response.write which is 
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%= %> , <%: %> 
+  ]]></script>
+  which will be described later so the above code will be changed to:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%= String.Format("The title of this page is: {0}", this.Title ?? "n/a") %>
+  ]]></script>
+
+
+
+Or can be used like this:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<% Trace.Warn( "Embede Code Block" , "Hello World") %>  ]]></script>
+
+
+		Another sample:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[<% HtmlString userInput = new HtmlString(Server.HtmlEncode("<script>alert('I am not vulnerable and not multi encoded')</script>"));%>  ]]></script>
+
+Another sample:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+<% string userInput="<script>alert('I am not vulnerable')</script>"; %> ]]></script>
+
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[<%= %>   ]]></script>
+
+is the equivalent of doing Response.Write("") wherever you place it(explicit output to page)
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[<%= SayHello("Ahmed") %>  ]]></script>
+
+
+or
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%= String.Format("The title of this page is: {0}", this.Title ?? "n/a") %>  ]]></script>
+
+
+Which is translated to:
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+private void __Render__control1(HtmlTextWriter __w, Control parameterContainer){
+__w.Write(string.Format("The title of this page is: {0}", base.Title ?? "n/a"));
+}  ]]></script>
+ <br />
+ <br />
+
+And that is why we might get the following error:
+<br />
+
+Compiler Error CS1026
+<br />
+) expected
+<br />
+An incomplete statement was found.
+<br />
+A common cause of this error is placing a statement, rather than an expression, within an inline expression in an ASP.NET page. For example, 
+<br />
+the following is incorrect:
+<br />
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+		<%=new TimeSpan(DateTime.Now.Ticks - new DateTime(2001, 1, 1).Ticks).Days;%>  ]]></script>
+
+the following is correct:
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+		<%=new TimeSpan(DateTime.Now.Ticks - new DateTime(2001, 1, 1).Ticks).Days %>  ]]></script>
+
+It is interpreted as follows:
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+		<% Response.Write(new TimeSpan(DateTime.Now.Ticks - new DateTime(2001, 1, 1).Ticks).Days); %>  ]]></script>
+
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	<%# %> is for Databinding and can only be used where databinding is supported (you can use these on the page-level outside a control if you call Page.DataBind() in your codebehind)
+	<%# Eval(X)%>
+	<%# Bind(X)%>  ]]></script>
+	
+The Eval function is used to define one-way (read-only) binding. The Bind function is used for two-way (updatable) binding.
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	<%#  C# Code %> like  <%# DateTime.Now.Hour < 12 ? "Good morning" : "Hello" %>
+	<%# XPath ("Name")  %>
+	<%@ %> is page directive
+	<%-- %> is for server side comment block
+	<%$ %> is for resource access like   ]]</script>
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[<asp:Label runat="server" Text="<%$ AppSettings:Key %>" />
+]]></script>
+Which is translated to:
+<br />
+label.Text = Convert.ToString(
+<br />
+	AppSettingsExpressionBuilder.GetAppSetting("Key", typeof(Label), "Text"),
+<br />
+	CultureInfo.CurrentCulture);
+<br />
+Or
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%$ ConnectionStrings:ConnStrFromWebConfig  %>
+<%$ AppSettings:ValueFromWebConfig  %>
+<%$ Resources:Resource, Arabic  %>
+<%$ RouteValue:year  %>
+<%$ YourExpressionPrefix : Any   %>
+  ]]></script>
+
+
+<br />
+In ASP.Net 4 introduces a new syntax for writing data to the pages. It is . This is known as code nugget syntax. The functionality is similar to <%= %>, but this do the html encoding by default. You do not worry about cross site scripting any more if you are using this. 
+<br />
+<a href="http://weblogs.asp.net/sreejukg/archive/2010/07/28/prevent-cross-site-scripting-html-injection-attacks-with-lt.aspx">http://weblogs.asp.net/sreejukg/archive/2010/07/28/prevent-cross-site-scripting-html-injection-attacks-with-lt.aspx</a>
+<br />
+    <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+	<%: - writes out to the page, but with HTML encoded so it means it is like (<%= %>  + HTML encoded)
+	<%: userInput%>  ]]></script>
+
+  	
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

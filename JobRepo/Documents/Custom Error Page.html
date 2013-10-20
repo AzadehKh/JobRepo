@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'>A <b>Custome Error page<span lang="en-au"></b>
+has been used in this application:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. Error.aspx: </h4>
+
+Which contains the following code:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+        private void ShowError()
+        {
+            string err = "";
+            if (Server.GetLastError() != null)
+            {
+			   <b>An error occurred while processing your request</b><hr><br>" +
+                        "<br><b>Error in: </b>" + Request.Url.ToString() +
+                        "<br><b>Error Message: </b>" + GetInnerException(objErr) +
+                        "<br><b>Stack Trace:</b><br>" +
+                        objErr.StackTrace.ToString();
+
+                if (Server.GetLastError().GetBaseException() != null)
+                {
+                    Exception objbaseErr = Server.GetLastError().GetBaseException();
+                    err = err + "<br><br><b> BaseException </b>" +
+                    "<br><b>Error Message: </b>" + objbaseErr.Message.ToString() +
+                    "<br><b>Stack Trace:</b><br>" +
+                    objbaseErr.StackTrace.ToString();
+                }
+            }
+            this.litContent.Text = err;
+            //Response.Write(err);
+            Server.ClearError();
+        }
+]]></script>
+<b>Notice Server.GetLastError().GetBaseException() has been used to get the error and also Server.ClearError(); to clear all exceptions after finishing the process</b>
+  
+<h4>2. Using jQuery to show Exception Details: </h4>
+
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+<s type="text/javascript">
+    $(document).ready(function () {
+
+
+        $("#btnDetail").click(function () {
+                $("#gd").show("slow");
+
+            });
+
+            $("#btnClose").click(function () {
+                $("#gd").hide("slow");
+
+            });
+    });
+</s>
+  ]]></script>
+
+<h4>3. Web.Config: </h4>
+
+There is a new parameter "redirectMode" In asp.net 3.5 sp1
+the ResponseRewrite mode allows us to load the error Page without redirecting the browser, so the URL stays the same and also as the best important benefit: Exception information is not lost.
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<customErrors mode="Off" defaultRedirect="~/Error.aspx" redirectMode="ResponseRewrite"></customErrors>
+]]></script>  	
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

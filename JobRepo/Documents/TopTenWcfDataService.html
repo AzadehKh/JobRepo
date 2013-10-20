@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>TopTenWcfDataService<span lang="en-au">
+</span></b><span lang="en-au">is a <strong>WCF Data Service</strong> whitch benefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. WCF Data Service </h4>
+
+
+</ul> <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+ <JobRepoDataContext>
+    {
+
+        public static void InitializeService(DataServiceConfiguration config)
+        {
+
+            /*The 10 Top Jobs can be returned either by using 
+                this URL( notice that  Query options $expand, $filter, $orderby, $skip and $top can be applied as well)
+                http://localhost/TopTenWcfDataService.svc/Get10TopJobs
+                or By using this URL directly:
+                 http://localhost/TopTenWcfDataService.svc/Jobs
+             */
+            config.SetEntitySetAccessRule("Jobs", EntitySetRights.All);
+            config.SetServiceOperationAccessRule("Get10TopJobs", ServiceOperationRights.AllRead);
+
+            config.SetEntitySetPageSize("*", 25);
+            config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V2;
+        }
+
+        protected override void OnStartProcessingRequest(ProcessRequestArgs args)
+        {
+            //Cache for a minute based on querystring            
+            HttpContext context = HttpContext.Current;
+            HttpCachePolicy c = HttpContext.Current.Response.Cache;
+            c.SetCacheability(HttpCacheability.ServerAndPrivate);
+            c.SetExpires(HttpContext.Current.Timestamp.AddSeconds(60));
+            c.VaryByHeaders["Accept"] = true;
+            c.VaryByHeaders["Accept-Charset"] = true;
+            c.VaryByHeaders["Accept-Encoding"] = true;
+            c.VaryByParams["*"] = true;
+        }
+
+
+        /*
+         * Notice that if we return IEnumerable rather than IQueryable , 
+         * Query options $expand, $filter, $orderby, $skip and $top CANNOT be applied to the requested resource
+         * so By keeping the return as IQueryable we can access the data by using any query options:
+         * for example: http://localhost/TopTenWcfDataService.svc/Get10TopJobs?$filter=Title%20eq%20'.NET%20Developer'
+         * if we want to send selectedjob as well:
+         *  for example: http://localhost/TopTenWcfDataService.svc/Get10TopJobs?selectedjob='developer'$filter=Title%20eq%20'.NET%20Developer'
+         */
+        [WebGet(ResponseFormat=WebMessageFormat.Json)]
+        public IQueryable<Job> Get10TopJobs(string selectedjob)
+        {
+
+            if (selectedjob == null)
+                selectedjob = "";
+            return from jc in this.CurrentDataSource.Jobs
+                   .OrderByDescending(e => e.Viewed)
+                   .Where(e => (selectedjob == "" || e.Title.Contains(selectedjob)))
+                   .Take(10)
+                   select jc;
+
+
+        }
+
+
+    }
+
+]]></script>
+
+<h4>2. Updating data via WCF Data Service: </h4>
+
+WCF data Service is not only for fetching read-only data , it can be used to updating data:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+            UpdateJobViewedCount();
+            Response.Cache.AddValidationCallback(new HttpCacheValidateHandler(Validate), null);
+        }
+
+		
+		
+		
+         public void Validate(HttpContext context, Object data, ref HttpValidationStatus status)
+        {
+            
+         //   var request = HttpContext.Current.Request;
+            var request = context.Request;
+            if (request.QueryString["JJ"] == null)
+                status = HttpValidationStatus.Invalid;
+            else if (request.QueryString["JJ"] == "" || request.QueryString["JJ"] == "0")
+                status = HttpValidationStatus.IgnoreThisRequest;
+            else
+                status = HttpValidationStatus.Valid;
+
+        }
+		
+        protected void UpdateJobViewedCount()
+        {
+            var request = HttpContext.Current.Request;
+            Uri svcUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority) + Request.ApplicationPath
+                + "Services/TopTenWcfDataService.svc");
+            
+            try
+            {
+                TopTenWcfDataServiceRef.JobRepoDataContext context
+                     = new TopTenWcfDataServiceRef.JobRepoDataContext(svcUri);
+                int JobID = (request.QueryString["JJ"] != null ? Convert.ToInt32(request.QueryString["JJ"]) : 0);
+
+
+
+                /*The following query will be transfered to
+                 http://localhost:50339/Services/TopTenWcfDataService.svc/Jobs()?$filter=JobID eq 15
+                 * http://localhost:50339/Services/TopTenWcfDataService.svc/Jobs()?$filter=JobID%20eq%2015
+                 */
+				 var job = jobs.Single();
+
+                /*
+                    We can get the same result using LINQ Query:
+                    var job = (from j in context.Jobs
+                               where j.JobID.Equals(JobID)
+                               select j).Single();
+                    it will will be transfered to
+                    http://localhost:50339/Services/TopTenWcfDataService.svc/Jobs(15)
+                 */
+
+                if (job != null)
+                {
+
+                    job.Viewed += 1;
+                    context.UpdateObject(job);
+
+                    context.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+                Response.Write(ex.Message);
+            }
+            
+        }
+
+ 
+]]></script>
+
+<h4>3. Custom User Control: </h4>
+
+A custom user control has been created to expose data:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js,html"><![CDATA[
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Top10Job.ascx.cs" 
+Inherits="JobRepo.User_Controls.Top10Job" %>
+<s src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></s>
+<s src="../Scripts/jquery-blink.js" type="text/javascript"></s>
+<s type="text/javascript">
+    $(document).ready(function () {
+
+        $(document).ajaxError(function (e, xhr, settings, exception) {
+            alert('Response code: ' + xhr.status + ' \n Status: ' + xhr.statusText + ' \n ' + 'Exception: ' + exception + '\n Response text : \n' + xhr.responseText);
+        }); 
+        var selectedjob = '<%= HttpContext.Current.Session == null ? "" : HttpContext.Current.Session["SelectedJob"].ToString() %>';
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: "Services/TopTenWcfDataService.svc/Get10TopJobs?selectedjob='" + selectedjob + "'",
+            success: function (data) {
+
+
+
+                $.each(data.d.results, function (i, item) {
+
+                    /* 
+                    There is another way to loop through the items:
+                    jQuery.each(data.d.results, function () {
+                    alert(this.Title);
+                    });
+                    */
+
+                    $("<a Target='_blank' href=JobReviewer.aspx?JJ=" + item.JobID + "/>")
+                        .html(item.Title).appendTo("#lstContainer");
+
+                    /* instead of using .html() , you can use the following code: */
+                    /*
+                    $("<a Target='_blank' href=JobReviewer.aspx?JJ=" + item.JobID + ">" + item.Title + "</a>")
+                    .appendTo("#lstContainer");
+                    */
+                    $("</br>").appendTo("#lstContainer");
+
+                });
+            },
+            error: function () {
+                alert("Error calling the WCF Data Service.");
+            }
+        });
+
+    });
+ 
+</s>
+<div id="lstContainer"></div>
+
+]]></script>
+
+
+
+<b>Notice that event $(document).ajaxError() has been used to capture all raised exceptions</b>
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

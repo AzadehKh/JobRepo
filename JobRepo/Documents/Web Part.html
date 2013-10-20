@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>Web Parts<span lang="en-au"></b>
+have been used in several parts of this application , below is the list of some tips and comments which should be considered:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. Output caching profiles: </h4>
+it can be used to cache a page for a specific period of time
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+ 	 <caching>
+      <outputCacheSettings>
+        <outputCacheProfiles>
+          <add name="OneDayCacheProfile" enabled="true" duration="31536000" />
+        </outputCacheProfiles>
+      </outputCacheSettings>
+    </caching>
+]]></script>
+and it can be used as below:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+<%--    instead of setting durtion for cache e.g.  Duration="31536000" , we can use 
+        a generic cache profile defined in the web.config file
+        Notice that for user control , we cannot use CacheProfile attribute --%>
+<%@ OutputCache CacheProfile="OneDayCacheProfile" VaryByParam="none" %>
+]]></script>
+
+<h4>2. Cached Control: </h4>
+
+<ul>
+    <li>JobReviewer.ascx (Explained above) </li>
+    <li>DesignGuide.ascx</li>
+	
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DesignGuide.ascx.cs"
+    Inherits="JobRepo.User_Controls.DesignGuide" %>
+
+
+    <%@ OutputCache  VaryByParam="none" duration="31536000"%>
+
+  ]]></script>	
+  
+<b>	Notice that for user control , we cannot use CacheingProfile attribute and we have to use duration and other attributes directly</b>
+  
+      <li>SelectJob</li>
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+  <%--  <%@ OutputCache Duration="15" VaryByParam="none" VaryByControl="txtSearch" %>--%>
+  ]]></script>	
+<b>  Notice that this control cannot be cached as it will be used by a generic web part</b>
+      <li>Top10Job</li>
+	  It has the same problem that SelectJob has
+</ul>
+
+<h4>2. Verify caching : </h4>  	
+
+<ul>
+    <li>Adding the following line to Web.config under system.web</li>
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+   <trace enabled="true"/>
+  ]]></script>	
+    <li>
+	
+	Open Trace.axd In the browser (at the root of the webpage). Examine the first request, and notice that the Trace Information section shows the time required for
+different phases of the page generation process, including Begin PreInit, Begin Load,and Begin Render. Return to Trace.axd and examine the second request. Notice that the Trace Information section is empty, indicating that the page was accessed from the cache rather than the re-generated version.
+</li>
+</ul> 
+  
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

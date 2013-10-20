@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>SearchJob.aspx</b>
+benefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="index.html"> Go to Home</a></p>
+
+<h4>1. PredicateBuilder</h4>
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+    //The Original Code Found here:
+    //http://www.albahari.com/nutshell/predicatebuilder.aspx
+    public static class PredicateBuilder
+    {
+        public static Expression<Func<T, bool>> True<T>() { return f => true; }
+        public static Expression<Func<T, bool>> False<T>() { return f => false; }
+
+        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> expr1,
+                                                            Expression<Func<T, bool>> expr2)
+        {
+            var invokedExpr = Expression.Invoke(expr2, expr1.Parameters.Cast<Expression>());
+            return Expression.Lambda<Func<T, bool>>
+                  (Expression.OrElse(expr1.Body, invokedExpr), expr1.Parameters);
+        }
+
+        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> expr1,
+                                                             Expression<Func<T, bool>> expr2)
+        {
+            var invokedExpr = Expression.Invoke(expr2, expr1.Parameters.Cast<Expression>());
+            return Expression.Lambda<Func<T, bool>>
+                  (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
+        }
+    }  
+]]></script>
+and it can be used as follows:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+       [DataObjectMethod(DataObjectMethodType.Select)]
+        public List<JobDto> GetJobs(string WhereClause)
+        {
+            string[] values = null;
+            string Keywords = "";
+
+            if (WhereClause != "")
+            {
+                var jobpredicate = PredicateBuilder.False<Job>();
+
+                var citypredicate = PredicateBuilder.True<City>();
+
+                JobAdvTypeObject jobAdvobj = new JobAdvTypeObject();
+                var JobAdvTypes = jobAdvobj.GetAdvs();
+
+                string[] filters = WhereClause.Split('&');
+                foreach (string filter in filters)
+                {
+                    string[] where = filter.Split('=');
+                    switch (where[0])
+                    {
+                        case "DD": //Description
+                            Keywords = where[1];
+                            values = where[1].Split(';');
+  
+                            foreach (string value in values)
+                                jobpredicate = jobpredicate.Or(p => p.Description.Contains(value) || p.Title.Contains(value));
+
+                           jobpredicate = jobpredicate.And(p => p.Status=="A");
+                            break;
+                        case "LL": //Locatin
+                            values = where[1].Split(';');
+                            if (values.Length > 0)
+                            {
+                                //http://zhino.blog.com/2012/02/15/in-clause-in-linq/
+                                //JobAdvTypes = JobAdvTypes
+                                //     .Where(e => values.Contains(e.ID.ToString()));
+                                citypredicate = PredicateBuilder.False<City>();
+                                foreach (string value in values)
+                                    citypredicate = citypredicate.Or(p => p.CityName.Contains(value));
+                            }
+                            break;
+                    }
+                }
+
+                //http://www.albahari.com/nutshell/linqkit.aspx
+                var query = from job in context.Jobs.AsExpandable().Where(jobpredicate).AsEnumerable()
+                            join adv in JobAdvTypes.AsEnumerable()  on job.JobAdvTypeID equals adv.ID
+                            join loc in context.Locations.AsEnumerable() on job.LocationID equals loc.LocationID
+                            join city in context.Cities.AsExpandable().Where(citypredicate).AsEnumerable() on loc.CityID equals city.CityID
+                            
+                            select new JobDto()
+                            {
+                                Description = job.Description,
+                                ShortDescription = StripTagsRegex(job.Description),
+                                EmployerID = job.EmployerID,
+                                JobAdvType = city.CityName,
+                                JobAdvTypeID = job.JobAdvTypeID,
+                                JobID = job.JobID,
+                                JobTypeID = job.JobTypeID,
+                                LocationID = job.LocationID,
+                                PostedDate = job.PostedDate,
+                                SalaryFrom = job.SalaryFrom,
+                                SalaryTo = job.SalaryTo,
+                                Status = (job.Status == "U" ? "Unpaid" : job.Status == "E" ? "Expired" : "Active"),
+                                Title = job.Title,
+                                ValidFrom = job.ValidFrom,
+                                ValidTo = job.ValidTo,
+                                ValidationRange = "From " + job.ValidFrom.ToShortDateString() + " to " + job.ValidTo.ToShortDateString(),
+                                SalaryRange = job.SalaryFrom + (String.IsNullOrEmpty(job.SalaryTo) ? "" : " _ " + job.SalaryTo)
+
+
+                            };
+
+
+                //Saving the selected keywords for providing online statistics later
+                context.SetKeywordsPopularity(Keywords);
+
+                return query.ToList();
+            }
+            else
+                return null;
+
+        }
+
+]]></script>
+
+<h4>2. Remove HTML Tags</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+         //http://www.dotnetperls.com/remove-html-tags
+        public static string StripTagsRegex(string source)
+        {
+            source = (source.Length > 200 ? source.Substring(0, 200) : source);
+            source=  Regex.Replace(source, "<.*?>", string.Empty);
+            return source + "...";
+        }
+]]></script>
+
+
+<h4>3. HyperLink</h4>
+a)	Open a new tab:
+<br/>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+			Target="_blank"
+]]></script>
+<br/>
+b)	Dynamic NavigateURL:
+<br/>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+			NavigateUrl='<%# "~/JobReviewer.aspx?JJ=" + Eval("JobID") %>'
+]]></script>
+<br />
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+                                        <asp:HyperLink ID="TitleLabel" runat="server" CssClass="bold" ForeColor="#0000CC" Target="_blank"
+                                            NavigateUrl='<%# "~/JobReviewer.aspx?JJ=" + Eval("JobID") %>'><%# Eval("Title") %></asp:HyperLink>
+]]></script>
+
+<h4>4. AutoCompleteExtender </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+
+                <br />
+                &nbsp; use semicolon (;) to separate keywords<br />
+                <asp:Label ID="lblLocation" runat="server" Text="Location"></asp:Label>
+                &nbsp;&nbsp;&nbsp;
+                <AjaxControlToolkit:AutoCompleteExtender ID="AutoCompleteExtender1" runat="server"
+                    CompletionInterval="100" CompletionSetCount="10" DelimiterCharacters=";" EnableCaching="false"
+                    FirstRowSelected="false" MinimumPrefixLength="2" ServiceMethod="SearchLocations"
+                    TargetControlID="txtLocation">
+                </AjaxControlToolkit:AutoCompleteExtender>
+
+]]></script>
+It needs a WebMethod to fetch data:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        [System.Web.Script.Services.ScriptMethod()]
+        [System.Web.Services.WebMethod]
+        public static List<string> SearchLocations(string prefixText, int count)
+        {
+
+            
+            List<string> cities=null;
+
+            using (JobRepoDataContext context = new JobRepoDataContext())
+            {
+
+                cities = context.Cities.Where( e => e.CityName.Contains(prefixText))
+                    .Select( e=> e.CityName).ToList();
+ 
+                
+
+            }
+            return cities;
+
+        }
+]]></script>
+
+
+
+<h4>5. Ajax Extender </h4>
+
+Different Ajax Extender like UpdatePanel , UpdateProgress and .... have been used
+
+<h4>6. Profiler</h4>
+
+The following setting should be in Web.config
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+    <anonymousIdentification enabled="true" />
+    <profile inherits="JobRepo.ProfileCommon" defaultProvider="AspNetSqlProfileProvider">
+      <!--
+      This section should be deleted as the profile is defined to be inhertied from 
+      JobRepo.ProfileCommon which contains all the following Group and properties
+      <properties>
+        <group name="RecentSearch">
+          <add name="Keywords" type="System.String" allowAnonymous="true" />
+        </group>
+      </properties>-->
+      <providers>
+        <clear />
+        <add name="AspNetSqlProfileProvider" type="System.Web.Profile.SqlProfileProvider" 
+        connectionStringName="LocalSqlServer" applicationName="/" />
+      </providers>
+    </profile>
+]]></script>
+
+and we need the following classes:
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+  [Serializable]
+    public class RecentSearchGroup //: ProfileGroupBase
+    {
+        public RecentSearchGroup()
+        {
+        }
+
+  //      [SettingsAllowAnonymous(true)]
+       [CustomProviderData("Keywords;nvarchar")]
+        public virtual string Keywords { get; set; }
+    }
+
+
+]]></script>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+   [Serializable]
+   public class SecurityQuestionsGroup 
+   {
+       public SecurityQuestionsGroup()
+       {
+       }
+
+
+       [CustomProviderData("Question1;nvarchar")]
+       public virtual string Question1 { get; set; }
+       [CustomProviderData("Answer1;nvarchar")]
+       public virtual string Answer1 { get; set; }
+       [CustomProviderData("Question2;nvarchar")]
+       public virtual string Question2 { get; set; }
+       [CustomProviderData("Answer2;nvarchar")]
+       public virtual string Answer2 { get; set; }
+   }
+
+
+]]></script>
+
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    public class ProfileCommon : ProfileBase
+    {
+         [SettingsAllowAnonymous(true)]
+        public RecentSearchGroup RecentSearch
+        {
+            get
+            {
+                RecentSearchGroup rg = new RecentSearchGroup();
+                if (this.GetPropertyValue("RecentSearch") != null)
+                    rg = (RecentSearchGroup)(this.GetPropertyValue("RecentSearch"));
+                return rg;
+
+            }
+
+            set
+            {
+
+                this.SetPropertyValue("RecentSearch", value);
+
+            }
+        }
+
+         
+         [SettingsAllowAnonymous(false)]
+         public SecurityQuestionsGroup SecurityQuestions 
+         {
+             get
+             {
+                    return (SecurityQuestionsGroup)(this.GetPropertyValue("SecurityQuestions"));
+             }
+
+             set
+             {
+
+                 this.SetPropertyValue("SecurityQuestions", value);
+
+             }
+         }
+
+        public static ProfileCommon GetProfile()
+        {
+            return (ProfileCommon)HttpContext.Current.Profile;
+
+        }
+
+        public static ProfileCommon GetProfile(string userName)
+        {
+            return (ProfileCommon)Create(userName);
+        }
+
+
+    }
+
+]]></script>
+and data can be fetched and saved as follows:
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                ProfileCommon profile = ProfileCommon.GetProfile();
+                txtKeyword.Text = profile.RecentSearch.Keywords;
+            }
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            if (txtKeyword.Text != "")
+                whereClause = "DD=" + Server.HtmlEncode(txtKeyword.Text);
+            if (txtLocation.Text != "")
+                whereClause += "&LL=" + Server.HtmlEncode(txtLocation.Text);
+
+            objDSJob.Select();
+            lwSearchResult.DataBind();
+
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            profile.RecentSearch.Keywords = txtKeyword.Text;
+            profile.Save();
+        }
+
+]]></script>
+
+<!--
+<h4>5. </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+]]></script>
+-->
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

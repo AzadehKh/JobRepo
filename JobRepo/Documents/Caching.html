@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'>Several types of <b>Caching<span lang="en-au"></b>
+have been used in this application:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. ConnectionString: </h4>
+
+By default, Webparts are using SQL Express. They are using profiler with a connectionstring named "LocalSqlServer" so if we have a connecitonString named "ApplicationServices" , Web part cannot work with it as it is looking for "LocalSqlServer" to fix this problem , following sub-elements should be added to the web.config:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+  </connectionStrings>
+  	<remove name="LocalSqlServer" />
+    <add name="LocalSqlServer" connectionString="Data Source=.;Initial Catalog=aspnetdb;Integrated Security=True" providerName="System.Data.SqlClient" />
+    <add name="JobRepoDataContext" connectionString="metadata=res://*/Model.JobRepo.csdl|res://*/Model.JobRepo.ssdl|res://*/Model.JobRepo.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=.;initial catalog=JobRepo;integrated security=True;multipleactiveresultsets=True;App=EntityFramework&quot;" providerName="System.Data.EntityClient" />
+  </connectionStrings>
+
+]]></script>
+
+<h4>2. Conditional web part: </h4>
+
+These three elements should be defined for a conditional web part:
+<ul>
+    <li>1- WebPartConnection</li>
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+   		 <StaticConnections>
+              <asp:WebPartConnection ID="WebPartConnection1" ProviderID="SelectJob1" ProviderConnectionPointID="GetJobName"
+                  ConsumerID="Top10Job2" ConsumerConnectionPointID="GetSelectedJob" />
+          </StaticConnections>
+  ]]></script>
+    <li>2- An user Control contains a method tagged as ConnectionProvider</li>
+   <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    public partial class SelectJob : System.Web.UI.UserControl
+    {
+        private string _Jobname = string.Empty;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+         
+        }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            _Jobname = txtJob.Text;
+        }
+
+        [ConnectionProvider("Selected Job", "GetJobName")]
+        public string GetJobName()
+        {
+            return _Jobname;
+        }
+    }
+  ]]></script>	
+    <li>2- An user Control contains a method tagged as ConnectionConsumer</li>
+	   <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    public partial class Top10Job : System.Web.UI.UserControl
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+            try
+            {
+                HttpContext.Current.Session["SelectedJob"] = "";
+
+            }
+            catch  {}
+        }
+
+        [ConnectionConsumer("Selected Job", "GetSelectedJob")]
+        public void GetSelectedJob(string JobName)
+        {
+            try
+            {
+                Session["SelectedJob"] = JobName;
+            }
+            catch { }
+        }
+    }
+  ]]></script>	
+
+<b>  Notice that Top10Job has already been explained in TopTenWcfDataService which is using jQuery and WCF Data Service to fetch data</b>
+</ul> 
+
+<h4>2. Enable personalization to save changes done by users on WebZone(s) : </h4>
+The follwing should be added to the page using Web Zones:
+<script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+<Personalization InitialScope="Shared" Enabled="True" />
+  ]]></script>	
+Personalization cannot be used until the user logs in as these information(Personalization details) should be saved in Profile table for each user separately
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    public partial class Site : System.Web.UI.MasterPage
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            MembershipUser user = Membership.GetUser();
+            if (user != null && user.IsApproved)
+            {
+               // FormsAuthentication.SetAuthCookie(user.UserName, false /* createPersistentCookie */);
+
+                this.WebPartManager1.DisplayMode = WebPartManager.DesignDisplayMode;
+            }
+        }
+    }
+  ]]></script>
+  	
+<br/>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

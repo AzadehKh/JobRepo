@@ -1,0 +1,539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>SalarySurvay<span lang="en-au">
+</span></b><span lang="en-au">is a <strong>WCF Service</strong> whitch be</span>nefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	<a href="index.html">Go to Home </a> </p>
+
+
+<h4>1. REST Service </h4>
+
+By default , this service can not be in another library as it causes a cross-domain call to a WCF REST service
+In order to be able to do this , see <a href="http://blogs.microsoft.co.il/blogs/idof/archive/2011/07/02/cross-origin-resource-sharing-cors-and-wcf.aspx" > here</a>
+
+Notice that this service returns different formats:
+
+<ul>
+    <li>XML</li>
+    <li>JSON</li>
+    <li>Stream      </li>
+	
+</ul> <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+   /*
+     * A useful blog about ECF Raw Programming mode can be found here:
+     * http://blogs.msdn.com/b/carlosfigueira/archive/2008/04/17/wcf-raw-programming-model-web.aspx
+     * */
+    //[ServiceContract(Namespace="http://localhost:8080/JobRepo/KeywordsPopularity"])
+
+
+    /*
+     * By default , this service can not be in another library as it causes a cross-domain call to a WCF REST service
+     * In order to be able to do this , see here: 
+     * http://blogs.microsoft.co.il/blogs/idof/archive/2011/07/02/cross-origin-resource-sharing-cors-and-wcf.aspx
+    */
+    [ServiceContract(Namespace = "KeywordsPopularityServices")]
+    public interface IKeywordsPopularityRESTService
+    {
+        /*
+            [OperationContract(Name = "GetPopularity")] 
+             if we have a SOAP Service ,  We need to change property Name of operationContract
+            as WebMessageFormat have two methods with the same name in our .NET code
+        */
+        [WebGet(ResponseFormat = WebMessageFormat.Json
+        , UriTemplate = "KeywordsPopularity/{keyword}")]
+        KeywordsPopularityDto GetKeywordsPopularity(string Keyword);
+
+        [WebGet(ResponseFormat = WebMessageFormat.Xml
+        , UriTemplate = "KeywordsPopularity/xml")]
+        [OperationContract(Name = "GetPopularityAsXML")]
+         XElement GetKeywordsPopularity();
+
+        [WebGet(UriTemplate = "KeywordsPopularity/json/version1"
+        , ResponseFormat = WebMessageFormat.Json)]
+        [OperationContract(Name = "GetPopularityAsJSONV1")]
+         string GetKeywordsPopularityAsJSONV1();
+
+
+        /*
+         * Set the response format to ResponseFormat = WebMessageFormat.Json
+         * is enough to return JSON
+         * 
+         * The restun value cannot be IEnumerable rathen than List
+         * */
+        [WebGet(UriTemplate = "KeywordsPopularity/json/version2"
+        , ResponseFormat = WebMessageFormat.Json)]
+        [OperationContract(Name = "GetPopularityAsJSONV2")]
+         List<KeywordsPopularityDto> GetKeywordsPopularityAsJSONV2();
+
+        //[WebGet]
+        // Stream GetValueAsStream();
+        /*
+         *  an on the client side it should be used as follows:
+           <img src=""  id="image1" width="500" height="400" />
+            function ShowImage() {// Call the WCF service
+                   $("#image1").attr('src', 
+            'service/KeywordsPopularityRESTService.svc/GetValueAsStream');}
+         * 
+         */
+    }
+]]></script>
+
+The service interface has been implemented as below:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class KeywordsPopularityRESTService : IKeywordsPopularityRESTService
+    {
+
+
+
+        public KeywordsPopularityDto GetKeywordsPopularity(string Keyword)
+        {
+
+            //Keyword = System.Uri.UnescapeDataString(Keyword); 
+
+            Keyword = Keyword.Replace("[Keyword]", ".");
+            using (JobRepoDataContext context = new JobRepoDataContext())
+            {
+                /*
+                 * LINQ to Entity does not support ToString() when we need Count  = pop.Count.ToString()
+                 * to fix this problem we need to get data as Objct (var tempobject) and LINQ to Object 
+                 * support Tostring()
+                 */
+                var tempobject = from pop in context.KeywordPopularities
+                                                             .Where( e =>e.Keyword.Equals(Keyword))
+                                                             select new 
+                                                             {
+                                                                 Keyword = pop.Keyword,
+                                                                 Count = pop.Count
+                                                             };
+
+
+
+                IEnumerable<KeywordsPopularityDto> popJson = (from pop in tempobject.AsEnumerable()
+                                                             select new KeywordsPopularityDto
+                                                             {
+                                                                 Keyword = pop.Keyword,
+                                                                 Count = pop.Count.ToString()
+                                                             }).ToList();
+                return popJson.FirstOrDefault();
+            }
+
+        }
+
+
+
+        public XElement GetKeywordsPopularity()
+        {
+            XElement popXml = null;
+            using (JobRepoDataContext context = new JobRepoDataContext())
+            {
+
+                //popXml = new
+                //XElement("KeywordPopularities", from pop in context.KeywordPopularities
+                //                                select new
+                //                                XElement("KeywordPopularities",
+                //                                new XElement("Keyword", pop.Keyword),
+                //                                new XElement("Count", pop.Count + "")
+                //                                ));
+
+                /*
+                 * The aobve code does not work becuase We're using an XElement constructor that takes parameters 
+                 * in our "select" clause. Since XElement doesn't have a parameterless constructor,
+                 * we might need to change your code to select an anonymous type,
+                 * and initialize the XElement collection after the fact so 
+                 * we should do the EF query first, and then calling ToList() on it 
+                 * so that I can select the XElement collection using Linq to Objects rather than EF
+                 * http://stackoverflow.com/questions/3464035/what-does-the-parameterless-constructors-and-initializers-are-supported
+                 * */
+
+                var els = from pop in context.KeywordPopularities
+                          .OrderBy(e => e.Keyword)
+                          select new { pop.Keyword, pop.Count };
+
+                popXml = new XElement("KeywordPopularities",
+                     els.ToList()
+                        .Select(e => new XElement("KeywordPopularity",
+                                         new XElement("Keyword", e.Keyword),
+                                                 new XElement("Count", e.Count + "")
+                                         )));
+
+
+            }
+            return popXml;
+        }
+
+
+        public string GetKeywordsPopularityAsJSONV1()
+        {
+
+            using (JobRepoDataContext context = new JobRepoDataContext())
+            {
+                //IEnumerable<KeywordPopularity> popJson = from pop in context.KeywordPopularities
+                //                                        select pop;
+                //DataContractJsonSerializer ser =
+                //  new DataContractJsonSerializer(typeof(IEnumerable<KeywordPopularity>)); 
+
+                /*
+                 * You cannot return an IEnumerable of type KeywordPopularity because 
+                 * EF entities cannot be serialized by default  and we must add code generation to them
+                 * so instead of returning an ADO.NET entity ,  we can do one of the following solutions:
+                 *  1 - Create a DTO object which is decorated either by Attribute [DataContract] or [Serializable] can fixed out problem as we will have a Serializable object
+                 *  2 - Using the second GetKeywordsPopularityAsJSONV2
+                 *  
+                 * But if you still want to know how to create Serializable entities please see
+                  http://msdn.microsoft.com/en-us/library/ff407090.aspx
+                 * 
+                */
+                IEnumerable<KeywordsPopularityDto> popJson = from pop in context.KeywordPopularities
+                                                             .OrderBy(e => e.Keyword)
+                                                             select new KeywordsPopularityDto
+                                                             {
+                                                                 Keyword = pop.Keyword,
+                                                                 Count = pop.Count + ""
+                                                             };
+
+
+                DataContractJsonSerializer ser =
+                  new DataContractJsonSerializer(typeof(IEnumerable<KeywordsPopularityDto>));
+                MemoryStream ms = new MemoryStream();
+                ser.WriteObject(ms, popJson);
+
+                string json = Encoding.Default.GetString(ms.ToArray());
+                ms.Close();
+
+
+                //HttpContext.Current.Response
+                // Response
+                WebOperationContext.Current.OutgoingResponse.ContentType
+                    = "application/json; charset=utf-8";
+                return json;
+            }
+
+        }
+
+
+        public List<KeywordsPopularityDto> GetKeywordsPopularityAsJSONV2()
+        {
+
+            using (JobRepoDataContext context = new JobRepoDataContext())
+            {
+
+                IEnumerable<KeywordsPopularityDto> popJson = from pop in context.KeywordPopularities
+                                                             .OrderBy(e => e.Keyword)
+                                                             select new KeywordsPopularityDto
+                                                             {
+                                                                 Keyword = pop.Keyword,
+                                                                 Count = pop.Count + ""
+                                                             };
+
+
+
+
+                return popJson.ToList();
+            }
+
+        }
+
+
+      //public Stream GetValueAsStream()
+      //{
+      //    WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
+      //    return new MemoryStream(Encoding.UTF8.GetBytes(Value.ToString()));
+      //}
+    }
+
+]]></script>
+
+the service is using the following data Contract:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+   [DataContract]
+    public class KeywordsPopularityDto
+    {
+        public KeywordsPopularityDto()
+        {
+        }
+
+        [DataMember]
+        public String Keyword { get; set; }
+        [DataMember]
+        public string Count { get; set; }
+    }
+]]></script>
+
+
+<h4>2. procedure and function:</h4>
+the service is using the following stored procedure and function: 
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+CREATE FUNCTION [dbo].[Fun_GetSplit]
+(
+	 @Keyowrds varchar(8000)
+)  
+RETURNS @words table 
+(
+	word varchar(500)
+) 
+AS  
+BEGIN 
+	Declare @word nvarchar(500)
+
+
+	While (Charindex(';',@Keyowrds)>0)
+	Begin
+		Set @word	 = ltrim(rtrim(Substring(@Keyowrds,1,Charindex(';',@Keyowrds)-1)))
+
+		if ( select count(*) From @words Where word = @word ) =0
+			Insert Into @words (word)
+			Select word = @word
+		
+		Set @Keyowrds = Substring(@Keyowrds,Charindex(';',@Keyowrds)+1,len(@Keyowrds))
+
+	End
+	
+	Set @word	 = ltrim(rtrim(@Keyowrds))
+	if ( select count(*) From @words Where word = @word ) =0
+	Insert Into @words (word)
+	Select word = @word
+	
+	Delete From @words Where ISNULL( word , '') =''
+
+	Return
+End	
+]]></script>
+
+And
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+CREATE PROCEDURE [dbo].[SetKeywordsPopularity] @Keyowrds varchar(8000)
+As
+
+SET NOCOUNT ON
+
+Declare @word varchar(500)
+
+DECLARE Ckeyword CURSOR for
+select * from  dbo.Fun_GetSplit(@Keyowrds)
+
+OPEN Ckeyword   
+FETCH NEXT FROM Ckeyword INTO @word 
+
+WHILE (@@FETCH_STATUS = 0)
+BEGIN
+
+	if ( select count(*) From KeywordPopularity Where Keyword = @word ) =0 
+		insert into KeywordPopularity( Keyword ,[Count] ) values (@word , 1)
+	else
+		Update KeywordPopularity Set [Count] = [Count]  + 1 Where Keyword = @word 
+	
+    FETCH NEXT FROM Ckeyword into @word
+END
+
+CLOSE Ckeyword
+
+DEALLOCATE Ckeyword]]></script>
+
+<h4>1. Host REST Service </h4>
+
+A .svc file has been used to host the service
+<br />
+Notice that  <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[Factory="System.ServiceModel.Activation.WebServiceHostFactory"]]></script>
+ 
+has been used as it will add all essential settings including Service and endpoint and etc. to the web.config 
+Of course, if you need to customize the binding, you have to use the configuration system or build a class that derives from WebServiceHost/WebServiceFactory
+
+
+<h4>1. Call REST Service </h4>
+
+Two different ways can be used to call a REST service:
+<br />
+<ul>
+    <li>Using JQuery:</li>
+	
+<script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+<script language="javascript" type="text/javascript">
+
+        function GetKeywordsPopularity() {
+            
+            var keyword ="";
+            if ($('#txtSearch').val() == '')
+                return;
+            else {
+
+                keyword = $('#txtSearch').val();
+                /*
+                Sending a keyword contains "." like ".NET" causes to fail the call
+                There were some suggestions to replace invalid characters in the URL 
+                explained below but none of the following approaches cannot fix the problem
+                As . they do not recognized as invalid character :
+
+                1- If you wish to keep the symbols in the URI, but encode them:
+                keyword = encodeURIComponent(keyword);
+                2- If you wish to build 'friendly' URIs such as those on blogs:
+                keyword = keyword.replace(/[^a-zA-Z0-9-_]/g, '');
+                3- keyword =  escape(keyword) and on the server side use
+                System.Uri.UnescapeDataString(msg);
+                to get the original keyword
+
+                So the only solution is replace "." with a unique word but both [
+                and ] are invalid characters so we need encodeURIComponent as well
+
+                */
+                keyword = encodeURIComponent(keyword.replace('.', '[keyword]'));
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "Services/KeywordsPopularityRESTServiceHost.svc/" +
+                 "KeywordsPopularity/" + keyword,
+                dataType: "json",
+                contentType: "application/json",
+                processdata: false,
+                success: function (data) {
+                    $("#MainContent_MainContent_lblResult").html("Popularity is " + (data != null ? data.Count : "0"));
+                },
+                error: function () {
+                    alert("Error calling the REST service.");
+                }
+            });
+        }
+        /*
+        In ASP.NET, it is default nature that if you press the Enter key 
+        on any text box, the page wil post back. To stop this
+        http://www.codeproject.com/Tips/269388/How-prevent-Textbox-postback-when-hit-enter-key-in
+        */
+        /* notice that it is NOT necessary to put this function 
+          inside the page load event e.g. $(document).ready(function () {});
+          and it can be a standalone function
+        */
+        $(function () {
+            $(':text').bind('keydown', function (e) {
+                //on keydown for all textboxes
+                if (e.keyCode == 13) {
+                    //if this is enter key
+                    e.preventDefault();
+                    return false;
+                }
+                else
+                    return true;
+
+            });
+        });
+        /*
+        function btnSearch_onclick() {
+        var service = new JobRepo.Services.KeywordsPopularityRESTService();
+        service.GetKeywordsPopularity(document.getElementById("txtSearch").value , 
+        onSuccess, onFail, null);
+        }
+        function onSuccess(result) {
+        document.getElementById("lblResult").innerText = result;
+        }
+        function onFail(result) {
+        alert(result);
+        }
+        */
+]]></script>	
+<b>Notice that , by using 	$(':text').bind('keydown', function (e)  .... , postback has been avoided by pressing Enter</b>
+	<br/>
+	<br/>
+    <li>Using WebChannelFactory in code behind:</li>
+<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+
+        private XElement FetchDataFomService()
+        {
+            XElement result = null;
+            /*  
+                AS the application is using Built-in web server 
+                to get the assigned port number, we need to get the address dynamically
+                so the following code should be used to get the Base Url :
+                Request.Url.GetLeftPart(UriPartial.Authority) + Request.ApplicationPath 
+             */ 
+			 <IKeywordsPopularityRESTService> cf
+                 = new WebChannelFactory<IKeywordsPopularityRESTService>
+            (new Uri(Request.Url.GetLeftPart(UriPartial.Authority) + Request.ApplicationPath 
+                + "Services/KeywordsPopularityRESTServiceHost.svc"));
+
+            IKeywordsPopularityRESTService client = cf.CreateChannel();
+            try
+            {
+                result = client.GetKeywordsPopularity();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                Trace.Write("Internal Error: {0}", ex.Message);
+
+            }
+
+                return result;
+        }
+
+		
+				]]></script>	
+and the method is called as below:
+		<script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+		
+
+		private void GetKeywordsPopularity()
+        {
+
+
+            XElement xmlelement = FetchDataFomService();
+            if (xmlelement == null)
+                return;
+
+            XmlReader reader = xmlelement.CreateReader();
+
+            string XSLTFile = Server.MapPath("PopularityViewer.xslt");
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            xslt.Load(XSLTFile);
+
+            if (xslt == null)
+                return;
+
+            StringBuilder result = new StringBuilder();
+            TextWriter writer = new StringWriter(result);
+            xslt.Transform(reader, null, writer);
+
+            lblContainer.Text = result.ToString();
+
+            reader.Close();
+            writer.Close();
+
+        }
+]]></script>	
+</ul> 
+
+<b>as you can see, an XSLT file has been created to transfer the output of the service to a table formatted version</b>
+<br/>
+<b>Notice that we are using Fetching address dynamically approach ( please above for more comments about this approach)</b>
+<br />
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

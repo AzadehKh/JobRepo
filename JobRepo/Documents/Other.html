@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+	<a href="index.html">Go to Home </a> 
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'>There are some other features and tips used in the JonRepo: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+</p>
+
+
+<h4>1. Tips: </h4>
+
+<ul>
+    <li>State managements :<b>Using cookies + database</b> as much as possible rather than using Session , ViewState , Application</li>
+	<br />
+    <li>for read-only pages or those pages which donot use viewstate ,  <b>Disable viewstate</b> for better performance.</li>
+	<br />
+    <li>Using server-side navigation ( <b>Server.transfer()</b>) and avoid Client-side navigation ( <b>redirect()</b>)</li>
+	<br />
+</ul> 
+
+<h4>2. Databases and ConnectionStrings : </h4>
+
+
+JobRepo is using two databases which are both embedded in the project SQL Server 2008 Express is needed to be installed and the connectionstrings used are as follow:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+ 
+ <add name="LocalSqlServer" connectionString="data source=.\SQLEXPRESS;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|\aspnetdb.mdf;User Instance=true"    providerName="System.Data.SqlClient" />
+    <add name="JobRepoDataContext" connectionString="metadata=res://*/Model.JobRepo.csdl|res://*/Model.JobRepo.ssdl|res://*/Model.JobRepo.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=.\SQLEXPRESS;AttachDbFilename=|DataDirectory|\JobRepo.mdf;Integrated Security=True;User Instance=True&quot;" providerName="System.Data.EntityClient" />
+
+  ]]></script>
+  
+However, if you want to use other version of SQL Server like  SQL Server  2008 Enterprise , the ConnectionStrings should be changed as below:
+  
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<add name="LocalSqlServer" connectionString="Data Source=.;Initial Catalog=aspnetdb;Integrated Security=True" providerName="System.Data.SqlClient" />
+    <add name="JobRepoDataContext" connectionString="metadata=res://*/Model.JobRepo.csdl|res://*/Model.JobRepo.ssdl|res://*/Model.JobRepo.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=.;initial catalog=JobRepo;integrated security=True;multipleactiveresultsets=True;App=EntityFramework&quot;" providerName="System.Data.EntityClient" />
+  ]]></script>
+
+  
+<h4>3. Sitemap: </h4>
+
+<ul>
+    <li>Sitemap Xml:</li>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="~/JobRepoHome.aspx" title="JobRepo" description="">
+    <siteMapNode url="~/Default.aspx" title="Home" description="" />
+    <siteMapNode url="" title="Employer" description="">
+        <siteMapNode url="~/EmployerProfile.aspx" title="My Profile" description=""/>
+        <siteMapNode url="~/JobList.aspx" title="My Jobs" description=""/>
+        <siteMapNode url="~/JobAdv.aspx" title="View Job Advertisements" description=""/>
+        <siteMapNode url="~/Employer/SeekEmployee" title="Employee Search" description=""/>
+        <siteMapNode url="~/SelectedEmployee/List" title="Selected Employee(s)" description=""/>
+    </siteMapNode>
+    <siteMapNode url="" title="Job Seeker" description="">
+      <siteMapNode url="~/JobSearch.aspx" title="Job Search"  description="" />
+      <siteMapNode url="~/JobSeeker/CreateProfile" title="My Profile"  description="" />
+      <siteMapNode url="~/JobSeeker/ManageResumes" title="My Resumes"  description="" />
+    </siteMapNode>
+    <siteMapNode url="" title="Statistics" description="">
+      <siteMapNode url="~/PopularityViewer.aspx" title="Keyword Popularity(1)"  description="" />
+      <siteMapNode url="~/KeywordPopularity/KeywordPopularity" title="Keyword Popularity(2)"  description="" />
+      <siteMapNode url="~/SalarySurvey.aspx" title="Salary Survey"  description="" />
+    </siteMapNode>
+    <siteMapNode url="" title="My Account" description="">
+      <siteMapNode url="~/Account/Login.aspx" title="Login"  description="" />
+      <siteMapNode url="~/Account/ChangePassword.aspx" title="Change Password"  description="" />
+    </siteMapNode>
+    <siteMapNode url="~/Administration/Console.aspx" title="Administration"  description="" />
+    <siteMapNode url="~/About.aspx" title="About"  description="" />
+  </siteMapNode>
+</siteMap>
+  ]]></script>
+	
+	
+    <li>Sitemap Menu:</li>
+	
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+ 		 <asp:Menu ID="NavigationMenu" runat="server" CssClass="menu" EnableViewState="false"
+                    IncludeStyleBlock="false" Orientation="Horizontal" DataSourceID="SiteMapDataSource">
+                </asp:Menu>
+                <asp:SiteMapDataSource ID="SiteMapDataSource" runat="server" ShowStartingNode="False" />
+  ]]></script>
+	
+    <li>breadcrumb Trail:</li>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+                <asp:SiteMapPath ID="SiteMapPath1" runat="server" ForeColor="White">
+                </asp:SiteMapPath>
+  ]]></script>
+</ul> 
+
+<h4>4. Health monitoring: </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+<healthMonitoring enabled="true" heartbeatInterval="1">
+      <bufferModes>
+        <add name="Critical Notification" maxBufferSize="100" maxFlushSize="20" urgentFlushThreshold="1" regularFlushInterval="Infinite" urgentFlushInterval="00:01:00" maxBufferThreads="1" />
+        <add name="Notification" maxBufferSize="300" maxFlushSize="20" urgentFlushThreshold="1" regularFlushInterval="Infinite" urgentFlushInterval="00:01:00" maxBufferThreads="1" />
+        <add name="Analysis" maxBufferSize="1000" maxFlushSize="100" urgentFlushThreshold="100" regularFlushInterval="00:05:00" urgentFlushInterval="00:01:00" maxBufferThreads="1" />
+        <add name="Logging" maxBufferSize="1000" maxFlushSize="200" urgentFlushThreshold="800" regularFlushInterval="00:30:00" urgentFlushInterval="00:05:00" maxBufferThreads="1" />
+      </bufferModes>
+      <providers>
+        <add name="EventLogProvider" type="System.Web.Management.EventLogWebEventProvider,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a" />
+        <!--<add connectionStringName="LocalSqlServer" maxEventDetailsLength="1073741823"
+                buffer="false" bufferMode="Notification" name="SqlWebEventProvider"
+                type="System.Web.Management.SqlWebEventProvider,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a" />
+        <add name="WmiWebEventProvider" type="System.Web.Management.WmiWebEventProvider,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a" />-->
+      </providers>
+      <profiles>
+        <add name="Default" minInstances="1" maxLimit="Infinite" minInterval="00:01:00" custom="" />
+        <!--<add name="Critical" minInstances="1" maxLimit="Infinite" minInterval="00:00:00"
+                custom="" />-->
+      </profiles>
+      <rules>
+        <add name="All Errors Default" eventName="All Errors" provider="EventLogProvider" profile="Default" minInstances="1" maxLimit="Infinite" minInterval="00:01:00" custom="" />
+        <!--<add name="Failure Audits Default" eventName="Failure Audits"
+                provider="EventLogProvider" profile="Default" minInstances="1"
+                maxLimit="Infinite" minInterval="00:01:00" custom="" />
+        <add name="Application Lifetime Events Default"
+                 eventName="Application Lifetime Events"
+                 provider="EventLogProvider"
+                 profile="Default"
+                 minInstances="1"
+                 maxLimit="Infinite"
+                 minInterval="00:01:00"
+                 custom=""/>
+-->
+      </rules>
+      <eventMappings>
+        <!--<add name="All Events" type="System.Web.Management.WebBaseEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Heartbeats" type="System.Web.Management.WebHeartbeatEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Application Lifetime Events" type="System.Web.Management.WebApplicationLifetimeEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Request Processing Events" type="System.Web.Management.WebRequestEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />-->
+        <add name="All Errors" type="System.Web.Management.WebBaseErrorEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a" startEventCode="0" endEventCode="2147483647" />
+        <!--<add name="Infrastructure Errors" type="System.Web.Management.WebErrorEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Request Processing Errors" type="System.Web.Management.WebRequestErrorEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="All Audits" type="System.Web.Management.WebAuditEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Failure Audits" type="System.Web.Management.WebFailureAuditEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />
+        <add name="Success Audits" type="System.Web.Management.WebSuccessAuditEvent,System.Web,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b03f5f7f11d50a3a"
+                startEventCode="0" endEventCode="2147483647" />-->
+      </eventMappings>
+    </healthMonitoring>
+  ]]></script>
+  
+<b>  Notice that EventLogWebEventProvider  has been chose to log errors.</b>
+<br />
+<br />
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

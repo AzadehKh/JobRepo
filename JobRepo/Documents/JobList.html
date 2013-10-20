@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>Job<span lang="en-au">List</span>.aspx</b>
+benefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="index.html"> Go to Home</a></p>
+
+<h4>1. Custom Insert/Update/Delete Methods using </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+       [DataObjectMethod(DataObjectMethodType.Insert)]
+        public int InsertJob(JobDto jobdto)
+        {
+            try
+            {
+                Job job = new Job()
+                {
+                    Description = jobdto.Description,
+                    EmployerID = jobdto.EmployerID,
+                    JobAdvTypeID = jobdto.JobAdvTypeID,
+                    JobID = jobdto.JobID,
+                    JobTypeID = jobdto.JobTypeID,
+                    LocationID = jobdto.LocationID,
+                    PostedDate = jobdto.PostedDate,
+                    SalaryFrom = jobdto.SalaryFrom,
+                    SalaryTo = jobdto.SalaryTo,
+                    Status = jobdto.Status,
+                    Title = jobdto.Title,
+                    ValidFrom = jobdto.ValidFrom,
+                    ValidTo = jobdto.ValidTo
+                };
+                context.Jobs.AddObject(job);
+
+
+                context.SaveChanges();
+
+
+                return job.JobID;
+            }
+            catch (Exception ex)
+            {
+                //Include catch blocks for specific exceptions first, 
+                //and handle or log the error as appropriate in each. 
+                //Include a generic catch block like this one last. 
+                throw ex;
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Delete)]
+        public void DeleteJob(JobDto jobdto)
+        {
+            try
+            {
+                Job origJob = context.Jobs
+                .FirstOrDefault(e => e.JobID == jobdto.JobID);
+                if (origJob == null)
+                    context.Jobs.Attach(origJob);
+
+                context.Jobs.DeleteObject(origJob);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                //Include catch blocks for specific exceptions first, 
+                //and handle or log the error as appropriate in each. 
+                //Include a generic catch block like this one last. 
+                throw ex;
+            }
+        }
+
+
+        [DataObjectMethod(DataObjectMethodType.Update)]
+        public void UpdateJob(JobDto jobdto)
+        {
+            try
+            {
+
+
+                
+                Job origJob = context.Jobs
+                    .FirstOrDefault(e => e.JobID == jobdto.JobID);
+                if (origJob != null)
+                {
+                    
+                    
+                        origJob.Description = jobdto.Description;                       
+                        origJob.JobAdvTypeID = jobdto.JobAdvTypeID;                     
+                        origJob.JobTypeID = jobdto.JobTypeID;
+                        origJob.LocationID = jobdto.LocationID;
+                        origJob.SalaryFrom = jobdto.SalaryFrom;
+                        origJob.SalaryTo = jobdto.SalaryTo;
+                        origJob.Status = jobdto.Status;
+                        origJob.Title = jobdto.Title;
+                        origJob.ValidFrom = jobdto.ValidFrom;
+                        origJob.ValidTo = jobdto.ValidTo;
+
+                        context.ApplyCurrentValues("Jobs", origJob);
+                }
+                else
+                    context.Jobs.Attach(origJob);
+                
+
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                //Include catch blocks for specific exceptions first, 
+                //and handle or log the error as appropriate in each. 
+                //Include a generic catch block like this one last. 
+                throw ex;
+            }
+        }
+
+]]></script>
+<h4>2. using <%#%> to access C# runtime </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+
+Visible='<%# Eval("Status") == "Unpaid" %>'
+
+]]></script>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+            <asp:TemplateField ShowHeader="False">
+                <ItemTemplate>
+                    <asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="false" 
+                    Visible='<%# Eval("Status") == "Unpaid" %>'
+                        CommandName="Delete" Text="Delete"></asp:LinkButton>
+                </ItemTemplate>
+            </asp:TemplateField>
+]]></script>
+<h4>3. EmptyDataTemplate</h4>
+All data Controls like GridView , ListView and ... have a template called EmptyDataTemplate which can be used when there is no data to show:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+        <EmptyDataTemplate>
+        <br />
+        Please make sure you have already created a <a href="EmployerProfile.aspx"> Profile </a> &nbsp;
+        <br />
+        </EmptyDataTemplate>
+]]></script>
+<h4>4. DTO Object</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        public class LocationDto 
+        {
+
+           public string Description {get; set; } 
+
+           [Key]
+           public int LocationID {get; set; } 
+        }
+
+]]></script>
+<!--
+<h4>5. </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+]]></script>
+-->
+
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>

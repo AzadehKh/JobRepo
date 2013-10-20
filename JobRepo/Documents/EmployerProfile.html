@@ -1,0 +1,769 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>EmployerProfile.aspx</b>
+benefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="index.html"> Go to Home</a></p>
+<h4>1. Using Multiview/View</h4>
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+      protected void Button_Command(object sender, CommandEventArgs e)
+        {
+            switch (e.CommandName)
+            {
+                case "CompanyDetails":
+                    if (CreateUser())
+                    {
+                        MultiView1.ActiveViewIndex = 1;
+                        btnNext.Enabled = false;
+                        btnPrevious.Enabled = true;
+                    }
+                    break;
+                case "AccountDetails":
+
+                    MultiView1.ActiveViewIndex = 0;
+                    txtUsername.Enabled = false;
+                    txtPassword.Enabled = false;
+                     txtRecoveryEmail.Enabled = false;
+  ]]></script>
+<h4>2.	Using Web Service and jQuery to validate data entered</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+
+        $(document).ready(function () {
+            $("#MainContent_MainContent_txtUsername").keyup(function () {
+         
+                //Using custom attribute for textbox 
+                /*
+                Please notice that using so many custom att(s) is not recommended 
+                as it causes memory leak issues
+                */
+                $(this).attr("isvalid", function () { return false; });
+
+                $("#ValidationInfo").html("");
+                var username = $(this).val();
+                var minlen = 5; //parseInt("<%= Membership.MinRequiredPasswordLength %>");
+                if (username.length < parseInt("<%= Membership.MinRequiredPasswordLength %>")) return;
+
+                $("#ValidationInfo").html("Checking Username Availability ....");
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "Services/UserNameValidationService.asmx/IsValidUserName",
+                    data: "{'username': '" + username + "'}",
+                    success: function (data) {
+
+
+                        $("#MainContent_MainContent_txtUsername").attr("isvalid", function () { return data.d; })
+
+                        if (data.d == true) {
+
+                            $("#ValidationInfo").css("color", "Green");
+                            $("#ValidationInfo").html("Username is available");
+                        }
+                        else {
+
+                            $("#ValidationInfo").css("color", "Red");
+                            $("#ValidationInfo").html("Username is not available");
+                        }
+                    },
+                    error: function () {
+                        alert("Error calling the web service.");
+                    }
+                });
+            }
+             );
+]]></script>
+<h4>3.	Ajax Component(Ajax + jQuery + CSS + Custom CSS) </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+
+
+Type.registerNamespace("JobRepo");
+
+//create constructor
+JobRepo.PasswordStrengthValidationComponent = function () {
+    JobRepo.PasswordStrengthValidationComponent.initializeBase(this);
+}
+
+//define class
+JobRepo.PasswordStrengthValidationComponent.prototype = {
+    initialize: function () {
+        //add custom initialization here
+        JobRepo.PasswordStrengthValidationComponent.callBaseMethod(this, 'initialize');
+    },
+
+    CheckPasswordStrength: function (password) {
+        var strPass = new String(password.toString());
+        if (strPass.length < 6) {
+            return "Weak";
+        }
+        else {
+            if (strPass.length < 8) {
+                return "Medium";
+            }
+            else {
+                return "Strong";
+            }
+        }
+    },
+
+    dispose: function () {
+        //add custom dispose actions here
+        JobRepo.PasswordStrengthValidationComponent.callBaseMethod(this, 'dispose');
+    }
+}
+
+//register class as a Sys.Component
+JobRepo.PasswordStrengthValidationComponent.registerClass(
+    'JobRepo.PasswordStrengthValidationComponent', Sys.Component);
+
+//notify script loaded
+if (typeof (Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
+
+]]></script>
+
+and the other way to validate password witch is using Ajax but without creating any Component is:
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+
+          $("#MainContent_MainContent_txtPassword").keyup(function () {
+
+
+                var validator = new JobRepo.PasswordStrengthValidationComponent();
+                //var pass = document.getElementById("MainContent_MainContent_txtPassword").value;
+                var pass = $(this).val();
+                var strength = validator.CheckPasswordStrength(pass);
+                //document.getElementById("MainContent_MainContent_lblPasswordStrength").innerText = strength;
+                // either MainContent_lblPasswordStrength or <%=lblPasswordStrength.ClientID%> can be used
+                $("#<%=lblPasswordStrength.ClientID%>").html(strength);
+
+
+
+                if (strength == "Weak") {
+                    $("#<%=lblPasswordStrength.ClientID%>").css("color", "Red");
+                    $("#MainContent_MainContent_txtPassword").addClass("Password_Weak");
+                }
+                else
+                    if (strength == "Medium") {
+                        $("#<%=lblPasswordStrength.ClientID%>").css("color", "Blue");
+                        $("#MainContent_MainContent_txtPassword").addClass("Password_Medium");
+                    }
+                    else {
+                        $("#<%=lblPasswordStrength.ClientID%>").css("color", "Green");
+                        $("#MainContent_MainContent_txtPassword").addClass("Password_Strong");
+                    }
+            });
+
+]]></script>
+and Custom CSS:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+
+.Password_Weak
+{
+border: thin solid #FF0000;
+}
+.Password_Medium
+{
+    border: thin solid #0000FF;
+}
+.Password_Strong
+{
+border: medium solid #008000;
+}
+
+]]></script> 
+<h4>4. Ajax Enabled Control</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+   public class UserNameTextbox : TextBox, IScriptControl
+    {
+
+        private ScriptManager sMgr;
+        
+        
+        public string minLen;
+        public string validating;
+        public string validated; 
+
+        public IEnumerable<ScriptDescriptor> GetScriptDescriptors()
+        {
+            ScriptControlDescriptor descriptor =
+                new ScriptControlDescriptor("JobRepo.UserNameTextbox", this.ClientID);
+
+            descriptor.AddProperty("minLen", minLen);
+
+            descriptor.AddEvent("validating", validating);
+            descriptor.AddEvent("validated", validated);
+
+            return new ScriptDescriptor[] { descriptor };
+        }
+
+
+        public IEnumerable<ScriptReference> GetScriptReferences()
+        {
+
+            // UserNameTextbox.js has been embeded and it will be compiled 
+            // as a seperate assembly so it can be called via the following
+            // codes rather than using the commented code
+            ScriptReference reference = new ScriptReference();
+            reference.Assembly = "JobRepo";
+            reference.Name = "JobRepo.UserNameTextbox.js";
+
+            return new ScriptReference[] { reference };
+
+           // yield return new ScriptReference(Page.ClientScript
+            //     .GetWebResourceUrl(this.GetType(), "JobRepo.UserNameTextbox.js"));
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            if (!this.DesignMode)
+            {
+                sMgr = ScriptManager.GetCurrent(Page);
+
+                if (sMgr == null)
+                {
+                    throw new HttpException(
+                        "A ScriptManager control must exist on the page.");
+                }
+                sMgr.RegisterScriptControl(this);
+            }
+
+            base.OnPreRender(e);
+        }
+
+
+        protected override void Render(HtmlTextWriter writer)
+        {
+            if (!this.DesignMode)
+                sMgr.RegisterScriptDescriptors(this);
+
+            base.Render(writer);
+        }
+
+    }
+]]></script>
+
+and we need the below javascript 
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+
+Type.registerNamespace("JobRepo");
+
+//create constructor
+JobRepo.UserNameTextbox = function (element) {
+    JobRepo.UserNameTextbox.initializeBase(this, [element]);
+
+    this._minLen = null;
+}
+
+//define class
+JobRepo.UserNameTextbox.prototype = {
+
+    //initialize the UI control
+    initialize: function () {
+        JobRepo.UserNameTextbox.callBaseMethod(this, 'initialize');
+
+        this._onKeyupHandler = Function.createDelegate(this, this._onKeyup);
+        $addHandlers(this.get_element(), { 'keyup': this._onKeyup }, this);
+
+
+
+    },
+
+    dispose: function () {
+        $clearHandlers(this.get_element());
+        JobRepo.UserNameTextbox.callBaseMethod(this, 'dispose');
+    },
+
+    //define key press event
+    _onKeyup: function (e) {
+
+        //get data text    
+        var pass = this.get_element().value;
+        this.IsValidData(pass);
+
+    },
+
+    //define properties
+    get_minLen: function () {
+        return this._minLen;
+    },
+    set_minLen: function (value) {
+        this._minLen = value;
+    },
+
+
+
+    //define events
+
+    // Create add and remove accessors fot the validated event.
+    add_validated: function (handler) {
+        this.get_events().addHandler("validated", handler);
+    },
+    remove_validated: function (handler) {
+        this.get_events().removeHandler("validated", handler);
+    },
+
+    // Create a function to raise the validated event.
+    raisevalidated: function (isvalid) {
+        var h = this.get_events().getHandler('validated');
+        if (h) h(this, new JobRepo.ValidatedEventArgs(isvalid));
+    },
+
+    // Create add and remove accessors for the validating event.
+    add_validating: function (handler) {
+        this.get_events().addHandler("validating", handler);
+    },
+    remove_validating: function (handler) {
+        this.get_events().removeHandler("validating", handler);
+    },
+
+    // Create a function to raise the validating event.
+    raisevalidating: function () {
+        var h = this.get_events().getHandler('validating');
+        if (h) h(this);
+    },
+
+
+    // define extra methods
+
+    IsValidData: function (input) {
+        var strInput = new String(input.toString());
+
+        this.raisevalidating();
+
+
+        if (strInput.length < this.get_minLen) {
+            this.raisevalidated(false);
+            return;
+        }
+
+        // We need to get help from closures to get access to parent 
+        //class (this) within callback method(success funtion)
+        var $t = this;
+        //we can use either var $t = $(this); or var $t = this;
+        //but If we use the former , we will need to use $t[0] to get access to its methods, properties and etc
+        // for example : $t[0].raisevalidated(true);
+
+
+
+        ///////////////////////////////////////////////
+        // $t.trigger('validated', [true]);
+        // $t.trigger("validating");
+
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            url: "Services/UserNameValidationService.asmx/IsValidUserName",
+            data: "{'username': '" + strInput + "'}",
+            success: function (data) {
+
+                // this.raiseEvent() doesn't work here 
+                //as we don't have access to the parent class here directly so we need to use $t
+                //debugger;
+                // $t.trigger('raisevalidated', true);
+                $t.raisevalidated(data.d);
+
+
+            },
+            error: function () {
+                alert("Error calling the web service.");
+            }
+        });
+    }
+}
+
+//register class as a Sys.Control
+JobRepo.UserNameTextbox.registerClass('JobRepo.UserNameTextbox', Sys.UI.Control);
+
+///////////////////////////////////Event Arguments Class//////////////////////////////////////////////
+
+JobRepo.ValidatedEventArgs = function (isvalid) {
+
+    if (arguments.length !== 1) throw Error.parameterCount();
+
+    JobRepo.ValidatedEventArgs.initializeBase(this);
+
+    this._isvalid = isvalid;
+
+}
+
+
+JobRepo.ValidatedEventArgs.prototype =
+
+{
+
+    get_isvalid: function () {
+        return this._isvalid;
+    }
+};
+
+JobRepo.ValidatedEventArgs.registerClass('JobRepo.ValidatedEventArgs', Sys.EventArgs);  
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+//notify loaded
+if (typeof (Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
+]]></script>
+and the following code should be added to the AssemblyInfo:
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+[assembly: System.Web.UI.WebResource("JobRepo.UserNameTextbox.js", "text/javascript")]
+
+]]></script>
+<h4>5. Web Service using LINQ </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+namespace JobRepo.Services
+{
+    /// <summary>
+    /// Summary description for UserNameValidationService
+    /// </summary>
+    [WebService(Namespace = "http://www.JobPro.com/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    [System.Web.Script.Services.ScriptService]
+    public class UserNameValidationService : System.Web.Services.WebService
+    {
+       
+        [WebMethod]
+        public bool IsValidUserName(string username)
+        {
+            
+            bool isvalid = false;
+
+
+            if (username != "" && username.Length >= Membership.MinRequiredPasswordLength)
+            {
+                using (JobRepoDataContext context = new JobRepoDataContext())
+                {
+
+                    var query = from MembershipUser user in Membership.GetAllUsers()
+                                //Notice that you  cannot user Lambda where .Where ( e => e. ....) 
+                                //instead , you need to use by LINQ Where operator: where user.....
+                                where user.UserName.ToUpper().Equals(username.ToUpper()) 
+                                select user;
+                                
+
+                    //IQueryable is not serializable so if we need to return the result ,
+                    //it should be returned as list :  query.ToList();
+                    isvalid = (query.Count() == 0);
+
+                }
+            }
+            return isvalid;
+            
+        }
+    }
+}
+
+]]></script>
+<h4>6. ObjectDatasource</h4>
+<script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+                 <asp:ObjectDataSource ID="objDsEmployer" runat="server" DataObjectTypeName="JobRepo.Model.Employer"
+                InsertMethod="InsertEmployer" OldValuesParameterFormatString="original_{0}" SelectMethod="GetProfile"
+                TypeName="JobRepo.Model.EmployerProfileObject" UpdateMethod="UpdateEmployer"
+                OnInserting="objDsEmployer_Inserting" OnUpdating="objDsEmployer_Updating" 
+                OnSelected="objDsEmployer_Selected" oninserted="objDsEmployer_Inserted" 
+                onupdated="objDsEmployer_Updated">
+                <SelectParameters>
+                    <asp:SessionParameter Name="UserID" SessionField="UserID" Type="String" />
+                </SelectParameters>
+            </asp:ObjectDataSource>
+
+
+
+
+]]></script>
+and also
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+
+        protected void objDsEmployer_Inserting(object sender, ObjectDataSourceMethodEventArgs e)
+        {
+            Employer item = (Employer)e.InputParameters[0];
+            bool UserCreated = true;
+
+
+
+            ProfileCommon profile = ProfileCommon.GetProfile();
+            profile.SecurityQuestions.Question1 = txtQuestion1.Text;
+            profile.SecurityQuestions.Answer1 = txtAnswer1.Text;
+            profile.SecurityQuestions.Question2 = txtQuestion2.Text;
+            profile.SecurityQuestions.Answer2 = txtAnswer2.Text;
+            try
+            {
+                profile.Save();
+
+            }
+            catch
+            {
+                UserCreated = false;
+            }
+
+            if (UserCreated)
+            {
+                item.UserID = new Guid(Membership.GetUser().ProviderUserKey.ToString());
+                saveImage(item);
+            }
+            else
+                e.Cancel = true;
+        }
+
+        protected void objDsEmployer_Updating(object sender, ObjectDataSourceMethodEventArgs e)
+        {
+            Employer item = (Employer)e.InputParameters[0];
+            item.UserID = new Guid( Session["UserID"].ToString());
+            saveImage(item);
+        }
+
+
+        private void saveImage(Employer item)
+        {
+
+
+            FileUpload logoUploader = (FileUpload)dvwEmployer.FindControl("logoUploader");
+
+            byte[] logo = new byte[logoUploader.PostedFile.ContentLength];
+            if (logo.Length > 0)
+            {
+                HttpPostedFile Image = logoUploader.PostedFile;
+                Image.InputStream.Read(logo, 0, (int)logoUploader.PostedFile.ContentLength);
+
+
+                item.Logo = logo;
+            }
+            else
+                if (ViewState["logo"] != null)
+                    item.Logo = (byte[])ViewState["logo"];
+        }
+
+        protected void objDsEmployer_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+
+
+            Employer item = ((List[Employer])e.ReturnValue)
+                .FirstOrDefault();
+
+            if (item == null)
+                /* The user might leave this page after creating a new account 
+                    so he/she can log in but she does not have any profie e.g.
+                    ProfileID = null
+                    so the View should go to the insert mode
+                 */
+                dvwEmployer.ChangeMode(DetailsViewMode.Insert);
+ 
+            _hasLogo = (item != null && item.Logo != null && item.Logo.Length > 0);
+            if (_hasLogo)
+            {
+
+                // During Insert and update , DetailsView sets the value of Unbound fields to null 
+                // To avoid losing the current values we need to use Viewstate for unbound fields
+                ViewState["logo"] = item.Logo;
+            }
+        }
+
+        protected void imgLogo_DataBinding(object sender, EventArgs e)
+        {
+            Image imgLogo = (Image)sender;
+            imgLogo.Visible = _hasLogo;
+        }
+
+        protected void objDsEmployer_Inserted(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            Session["EmployerID"] = e.ReturnValue;
+            //DetailsView Select Event has not been raised after submit/postback 
+            //so we need the following code to force the ASP.NET to fetch data again
+            Response.Redirect("EmployerProfile.aspx");
+
+        }
+
+        protected void objDsEmployer_Updated(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            //DetailsView Select Event has not been raised after submit/postback 
+            //so we need the following code to force the ASP.NET to fetch data again
+            Response.Redirect("EmployerProfile.aspx");
+        }
+
+]]></script>
+<h4>7. Viewstate and Session</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+       protected void Page_Load(object sender, EventArgs e)
+        {
+            btnPrevious.Enabled = false;
+            if (Membership.GetUser() != null)
+                Session["UserID"] = Membership.GetUser().ProviderUserKey.ToString();
+            else
+                Session["UserID"] = null;
+                ......
+                }
+                
+             
+        protected void objDsEmployer_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+			.......
+			
+            _hasLogo = (item != null && item.Logo != null && item.Logo.Length > 0);
+            if (_hasLogo)
+            {
+
+                // During Insert and update , DetailsView sets the value of Unbound fields to null 
+                // To avoid losing the current values we need to use Viewstate for unbound fields
+                ViewState["logo"] = item.Logo;
+            }
+        }
+
+            
+        private void saveImage(Employer item)
+        {
+
+			.......
+           else
+                if (ViewState["logo"] != null)
+                    item.Logo = (byte[])ViewState["logo"];
+        }    
+]]></script>
+<h4>8. HttpHandler </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+   public class ImageHandler : IHttpHandler
+    {
+
+        public void ProcessRequest(HttpContext context)
+        {
+
+            string ImageType = string.Empty;
+
+            using (JobRepoDataContext ctx = new JobRepoDataContext())
+            {
+                String EEE = context.Request.QueryString["employerid"];
+                int employerid = Convert.ToInt32(context.Request.QueryString["employerid"]);
+
+                Employer emp = ctx.Employer.FirstOrDefault(e => e.EmployerID == employerid);
+                if (emp != null && emp.Logo != null)
+                {
+
+                    //context.Response.ContentType ="jpg"; 
+                    context.Response.BinaryWrite(emp.Logo);
+
+                }
+            }
+        }
+
+        public bool IsReusable
+        {
+            get
+            {
+                return false;
+            }
+        }
+    }
+]]></script>
+and the handler can be used as below:
+<br/>
+Notice that timestamp has been used to avoid caching image by handler
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+
+ <asp:Image ID="imgLogo" runat="server" 
+ ImageUrl='<%# "Handlers/ImageHandler.ashx?dt=" 
+ + DateTime.Now.Ticks.ToString() + "&employerid=" + Eval("EmployerID") %>'
+ OnDataBinding="imgLogo_DataBinding" Width="500" Height="300" />
+]]></script>
+<h4>9. Custom Validator</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+<asp:CustomValidator ID="CustomValidator1" runat="server" 
+    ClientValidationFunction="Check4UserNameAvailability" 
+    ControlToValidate="txtUsername" 
+    ErrorMessage="Username must be at least <%= Membership.MinRequiredPasswordLength %> characters and available " 
+    ForeColor="Red" ValidationGroup="Group1">!</asp:CustomValidator>
+]]></script>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+ 
+
+        function Check4UserNameAvailability(source, arguments) {
+
+            var data = arguments.Value.split('');
+            arguments.IsValid = false;
+
+            if (data.length < parseInt("<%= Membership.MinRequiredPasswordLength %>")) return;
+
+            if ($("#MainContent_MainContent_txtUsername").attr("isvalid") == "false")
+                return;
+
+            arguments.IsValid = true;
+
+        }
+]]></script>
+<h4>10. Using JQuery effects</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: js"><![CDATA[
+
+            $("#MainContent_MainContent_dvwEmployer_btnShowLogo").click(function () {
+
+
+                if ($(this).attr("value") == "Show the saved logo") {
+                    $("#gd").show("slow");
+                    $(this).attr("value", "Close");
+                }
+                else {
+                    $(this).attr("value", "Show the saved logo");
+                    $("#gd").hide("slow");
+
+                }
+            });
+]]></script>
+<h4>11. Other Tips</h4>
+<h5> Disable Validation:</h5>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+	/*
+      To disable validation in a specific control :
+            Set the control's CausesValidation property to false. 
+       To disable a validation control :
+            Set the validation control's Enabled property to false. 
+       To disable client-side validation :
+            Set the validation control's EnableClientScript property to false.
+     */
+    txtPassword.CausesValidation = false;
+    CustomValidatorpassword.EnableClientScript = false;
+    CustomValidatorpassword.Enabled = false;
+    RequiredFieldValidatorpassword.EnableClientScript = false;
+    RequiredFieldValidatorpassword.Enabled = false;
+]]></script>
+
+<!--
+<h4>5. </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+]]></script>
+-->
+<a href="index.html"> Go to Home</a>
+</body>
+</html>

@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script src="../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/jquery-blink.js" type="text/javascript"></script>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<style type="text/css">
+			.syntaxhighlight {
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
+normal;mso-layout-grid-align:none;text-autospace:none'><b>JobEditor.aspx</b>
+benefits the following ASP.NET features and technologies:          
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="index.html"> Go to Home</a></p>
+
+<h4>1. HttpContext.Current.Request</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+      [DataObjectMethod(DataObjectMethodType.Select)]
+       public IEnumerable<JobAdvTypeDto> GetAdvs()
+       {
+           // Using either Context.Request or HttpContext.Current.Request is correct
+           string fullpath = HttpContext.Current.Request.MapPath(@"~\App_data\JobAdvType.xml");
+
+           XElement _advpXml = XElement.Load(fullpath);
+
+
+           var advQuery =
+           from adv in _advpXml.Descendants("Advertisement")
+           where adv.Attribute("Status").Value == "Active"
+           orderby adv.Element("Ordering").Value
+           select new JobAdvTypeDto
+           {
+               ID = Convert.ToInt32(adv.Element("ID").Value),
+               Offer = adv.Element("Offer").Value,
+               Price = "$ " + adv.Element("Price").Value,
+               Type = adv.Element("Type").Value,
+               Description = adv.Element("Description").Value
+               .Replace("*", "<br /> * ")
+           };
+
+           return advQuery;
+       }
+
+]]></script>
+notice that ObjectDataSource Configuration wizard can identify methods of a class as Select, Insert, Update and delete method automatically if the method is tagged with attribute [DataObjectMethod]  
+<h4>2. .AsEnumerable()</h4>
+
+The .AsEnumerable() is required if you're attempting to query an SQL database as the method in your code will have no translation to SQL. In that case the call to .AsEnumerable()  retrieves the results of the query up to that point and you're then working with local objects on which your method can operate.
+<br/>
+For more details see <a href="http://stackoverflow.com/questions/4085645/call-class-method-inside-the-linq-query">here</a>.
+<br/>
+
+
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+        [DataObjectMethod(DataObjectMethodType.Select)]
+        public List<JobDto> GetJobByID(int JobID)
+        {
+
+            JobAdvTypeObject jobAdvobj = new JobAdvTypeObject();
+        //    var JobAdvTypes = jobAdvobj.GetAllActiveAdvs();
+
+            var query = from job in context.Jobs.AsEnumerable()
+                        //                join adv in JobAdvTypes.AsEnumerable() on job.JobAdvTypeID equals adv.ID
+                        join typ in context.JobTypes.AsEnumerable() on job.JobTypeID equals typ.JobTypeID
+                        join loc in context.Locations.AsEnumerable() on job.LocationID equals loc.LocationID
+                        join city in context.Cities.AsExpandable().AsEnumerable() on loc.CityID equals city.CityID
+                        where job.JobID == JobID
+                        select new JobDto
+                        {
+                            Description = job.Description,
+                            ShortDescription = "",
+                            EmployerID = job.EmployerID,
+                            JobAdvType = city.CityName,
+                            JobAdvTypeID = job.JobAdvTypeID,
+                            JobID = job.JobID,
+                            JobTypeID = job.JobTypeID,
+                            LocationID = job.LocationID,
+                            PostedDate = job.PostedDate,
+                            SalaryFrom = job.SalaryFrom,
+                            SalaryTo = job.SalaryTo,
+                            Status = (job.Status == "U" ? "Unpaid" : job.Status == "E" ? "Expired" : "Active"),
+                            Title = job.Title,
+                            ValidFrom = job.ValidFrom,
+                            ValidTo = job.ValidTo,
+                            ValidationRange = "From " + job.ValidFrom.ToShortDateString() + " to " + job.ValidTo.ToShortDateString(),
+                            SalaryRange = job.SalaryFrom + (String.IsNullOrEmpty(job.SalaryTo) ? "" : " _ " + job.SalaryTo),
+                            JobType = typ.Description
+                        };
+
+            return query.ToList();
+
+        }
+
+]]></script>
+
+<h4>3. HtmlEditorExtender</h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: html"><![CDATA[
+                            <asp:TextBox ID="txtDescription" runat="server" Text='<%# Bind("Description") %>'
+                                TextMode="MultiLine" Height="500px" Width="400px"></asp:TextBox>
+                            
+                            
+                            <ajaxToolkit:HtmlEditorExtender ID="htmlEditor" runat="server" 
+                                TargetControlID="txtDescription" DisplaySourceTab="True" 
+                                ViewStateMode="Enabled">
+                            </ajaxToolkit:HtmlEditorExtender>
+]]></script>
+Using AntiXss as the default sanitizer is no longer supported as of June 2012. From the official announcement, apparantely the new version of AntiXss breaks too many things. 
+<br/>
+To use AjaxControlToolkit with HTML Agility Pack you first need to install the pacakge using Nuget (instruction) then you can use HTML Agility Pack as your sanitizer by modifying your web.config like this: 
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: xml"><![CDATA[
+
+<configuration> 
+    <configSections> 
+        <sectionGroup name="system.web"> 
+            <section name="sanitizer" requirePermission="false" 
+                     type="AjaxControlToolkit.Sanitizer.ProviderSanitizerSection, AjaxControlToolkit" /> 
+        </sectionGroup> 
+    </configSections> 
+ 
+    <system.web> 
+        <sanitizer defaultProvider="HtmlAgilityPackSanitizerProvider"> 
+            <providers> 
+                <add name="HtmlAgilityPackSanitizerProvider" type="AjaxControlToolkit.Sanitizer.HtmlAgilityPackSanitizerProvider"></add> 
+            </providers> 
+        </sanitizer> 
+      </system.web> 
+</configuration> 
+]]></script>
+
+
+<!--
+<h4>5. </h4>
+ <script type="syntaxhighlighter" class="syntaxhighlight brush: csharp"><![CDATA[
+
+]]></script>
+-->
+
+<a href="index.html"> Go to Home</a>
+
+</body>
+
+</html>
