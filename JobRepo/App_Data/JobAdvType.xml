@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Advertisements>
+  <!--*****************************************************************************************
+      Please attention that if you want to keep track of all changes ,Modify the Status of 
+      the unwanted records from "Active" to "Inactive" rather than deleting the record physically
+      *****************************************************************************************-->
+  <Advertisement Status="Active" >
+    <Ordering>1</Ordering>
+    <ID>1</ID>
+    <IsFree>True</IsFree>
+    <Price>0</Price>
+    <Type>Offer</Type>
+    <Description>
+      *   Unlimited Text
+      *   Logo
+      *   Active for 30 days
+    </Description>
+    <Offer>
+      This month's special offer !!!!
+    </Offer>
+  </Advertisement>
+  <Advertisement Status="Active" >
+    <Ordering>2</Ordering>
+    <ID>2</ID>
+    <IsFree>False</IsFree>
+    <Price>15</Price>
+    <Type>Standard</Type>
+    <Description>
+      *   Unlimited Text
+      *   Active for 15 days
+    </Description>
+    <Offer/>
+  </Advertisement>
+  <Advertisement Status="Inactive" >
+    <Ordering>3</Ordering>
+    <ID>3</ID>
+    <IsFree>False</IsFree>
+    <Price>30</Price>
+    <Type>Premium</Type>
+    <Description>
+      *   Unlimited Text
+      *   Logo
+      *   Active for 30 days
+    </Description>
+    <Offer/>
+  </Advertisement>
+  <Advertisement Status="Inactive" >
+    <Ordering>3</Ordering>
+    <ID>3</ID>
+    <IsFree>False</IsFree>
+    <Price>50</Price>
+    <Type>Enterprise</Type>
+    <Description>
+      *   Unlimited Text
+      *   Logo
+      *   Active for 30 days
+      *   Displayed in top 10 jobs Search Results
+    </Description>
+    <Offer/>
+  </Advertisement> 
+</Advertisements>
