@@ -1,0 +1,876 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="JobRepoModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="JobRepoModelStoreContainer">
+          <EntitySet Name="City" EntityType="JobRepoModel.Store.City" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Country" EntityType="JobRepoModel.Store.Country" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Employee" EntityType="JobRepoModel.Store.Employee" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Employer" EntityType="JobRepoModel.Store.Employer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Job" EntityType="JobRepoModel.Store.Job" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="JobType" EntityType="JobRepoModel.Store.JobType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="KeywordPopularity" EntityType="JobRepoModel.Store.KeywordPopularity" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Location" EntityType="JobRepoModel.Store.Location" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Province" EntityType="JobRepoModel.Store.Province" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Resume" EntityType="JobRepoModel.Store.Resume" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SelectedEmployee" EntityType="JobRepoModel.Store.SelectedEmployee" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_City_Province" Association="JobRepoModel.Store.FK_City_Province">
+            <End Role="Province" EntitySet="Province" />
+            <End Role="City" EntitySet="City" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_Employer" Association="JobRepoModel.Store.FK_Job_Employer">
+            <End Role="Employer" EntitySet="Employer" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_JobType" Association="JobRepoModel.Store.FK_Job_JobType">
+            <End Role="JobType" EntitySet="JobType" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_Location" Association="JobRepoModel.Store.FK_Job_Location">
+            <End Role="Location" EntitySet="Location" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_City" Association="JobRepoModel.Store.FK_Location_City">
+            <End Role="City" EntitySet="City" />
+            <End Role="Location" EntitySet="Location" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_Country" Association="JobRepoModel.Store.FK_Location_Country">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Location" EntitySet="Location" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_Province" Association="JobRepoModel.Store.FK_Location_Province">
+            <End Role="Province" EntitySet="Province" />
+            <End Role="Location" EntitySet="Location" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Province_Country" Association="JobRepoModel.Store.FK_Province_Country">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Province" EntitySet="Province" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resume_Employee" Association="JobRepoModel.Store.FK_Resume_Employee">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Resume" EntitySet="Resume" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SelectedEmployee_Employee" Association="JobRepoModel.Store.FK_SelectedEmployee_Employee">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="SelectedEmployee" EntitySet="SelectedEmployee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SelectedEmployee_Employer" Association="JobRepoModel.Store.FK_SelectedEmployee_Employer">
+            <End Role="Employer" EntitySet="Employer" />
+            <End Role="SelectedEmployee" EntitySet="SelectedEmployee" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityID" />
+          </Key>
+          <Property Name="CityID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ProvinceID" Type="int" Nullable="false" />
+          <Property Name="CityName" Type="nvarchar" Nullable="false" MaxLength="70" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="CountryID" />
+          </Key>
+          <Property Name="CountryID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CountryName" Type="nvarchar" Nullable="false" MaxLength="70" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Name="EmployeeID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="uniqueidentifier" />
+          <Property Name="FirstName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="LastName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Phone" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="Email" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="JobTitle" Type="varchar" Nullable="false" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="Employer">
+          <Key>
+            <PropertyRef Name="EmployerID" />
+          </Key>
+          <Property Name="EmployerID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="uniqueidentifier" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="30" />
+          <Property Name="Address" Type="varchar" Nullable="false" MaxLength="1000" />
+          <Property Name="Phone" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="Fax" Type="varchar" MaxLength="15" />
+          <Property Name="Email" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="WebSite" Type="varchar" MaxLength="100" />
+          <Property Name="ContactName" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="ContactEmail" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="ContactPhone" Type="varchar" Nullable="false" MaxLength="15" />
+          <Property Name="ContactMobile" Type="varchar" MaxLength="15" />
+          <Property Name="Logo" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="JobID" />
+          </Key>
+          <Property Name="JobID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EmployerID" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
+          <Property Name="Description" Type="varchar(max)" Nullable="false" />
+          <Property Name="PostedDate" Type="datetime" Nullable="false" />
+          <Property Name="ValidFrom" Type="date" Nullable="false" />
+          <Property Name="ValidTo" Type="date" Nullable="false" />
+          <Property Name="SalaryFrom" Type="varchar" MaxLength="50" />
+          <Property Name="SalaryTo" Type="varchar" MaxLength="50" />
+          <Property Name="JobTypeID" Type="int" Nullable="false" />
+          <Property Name="LocationID" Type="int" Nullable="false" />
+          <Property Name="Status" Type="char" Nullable="false" MaxLength="1" />
+          <Property Name="JobAdvTypeID" Type="int" Nullable="false" />
+          <Property Name="Viewed" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="JobType">
+          <Key>
+            <PropertyRef Name="JobTypeID" />
+          </Key>
+          <Property Name="JobTypeID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="KeywordPopularity">
+          <Key>
+            <PropertyRef Name="KeywordPopularityID" />
+          </Key>
+          <Property Name="KeywordPopularityID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="Count" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationID" />
+          </Key>
+          <Property Name="LocationID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CountryID" Type="int" Nullable="false" />
+          <Property Name="ProvinceID" Type="int" Nullable="false" />
+          <Property Name="CityID" Type="int" Nullable="false" />
+          <Property Name="PostCode" Type="nvarchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="ProvinceID" />
+          </Key>
+          <Property Name="ProvinceID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CountryID" Type="int" Nullable="false" />
+          <Property Name="ProvinceName" Type="nvarchar" Nullable="false" MaxLength="70" />
+        </EntityType>
+        <EntityType Name="Resume">
+          <Key>
+            <PropertyRef Name="ResumeID" />
+          </Key>
+          <Property Name="ResumeID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeID" Type="int" Nullable="false" />
+          <Property Name="Keywords" Type="varchar(max)" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
+          <Property Name="Description" Type="varbinary(max)" Nullable="false" />
+          <Property Name="PostedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SelectedEmployee">
+          <Key>
+            <PropertyRef Name="SelectedEmployeeID" />
+          </Key>
+          <Property Name="SelectedEmployeeID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EmployerID" Type="int" Nullable="false" />
+          <Property Name="EmployeeID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_City_Province">
+          <End Role="Province" Type="JobRepoModel.Store.Province" Multiplicity="1" />
+          <End Role="City" Type="JobRepoModel.Store.City" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ProvinceID" />
+            </Principal>
+            <Dependent Role="City">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_Employer">
+          <End Role="Employer" Type="JobRepoModel.Store.Employer" Multiplicity="1" />
+          <End Role="Job" Type="JobRepoModel.Store.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employer">
+              <PropertyRef Name="EmployerID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="EmployerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_JobType">
+          <End Role="JobType" Type="JobRepoModel.Store.JobType" Multiplicity="1" />
+          <End Role="Job" Type="JobRepoModel.Store.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobType">
+              <PropertyRef Name="JobTypeID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="JobTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_Location">
+          <End Role="Location" Type="JobRepoModel.Store.Location" Multiplicity="1" />
+          <End Role="Job" Type="JobRepoModel.Store.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Location">
+              <PropertyRef Name="LocationID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="LocationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_City">
+          <End Role="City" Type="JobRepoModel.Store.City" Multiplicity="1" />
+          <End Role="Location" Type="JobRepoModel.Store.Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="CityID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_Country">
+          <End Role="Country" Type="JobRepoModel.Store.Country" Multiplicity="1" />
+          <End Role="Location" Type="JobRepoModel.Store.Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="CountryID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="CountryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_Province">
+          <End Role="Province" Type="JobRepoModel.Store.Province" Multiplicity="1" />
+          <End Role="Location" Type="JobRepoModel.Store.Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ProvinceID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Province_Country">
+          <End Role="Country" Type="JobRepoModel.Store.Country" Multiplicity="1" />
+          <End Role="Province" Type="JobRepoModel.Store.Province" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="CountryID" />
+            </Principal>
+            <Dependent Role="Province">
+              <PropertyRef Name="CountryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resume_Employee">
+          <End Role="Employee" Type="JobRepoModel.Store.Employee" Multiplicity="1" />
+          <End Role="Resume" Type="JobRepoModel.Store.Resume" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="Resume">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SelectedEmployee_Employee">
+          <End Role="Employee" Type="JobRepoModel.Store.Employee" Multiplicity="1" />
+          <End Role="SelectedEmployee" Type="JobRepoModel.Store.SelectedEmployee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="SelectedEmployee">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SelectedEmployee_Employer">
+          <End Role="Employer" Type="JobRepoModel.Store.Employer" Multiplicity="1" />
+          <End Role="SelectedEmployee" Type="JobRepoModel.Store.SelectedEmployee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employer">
+              <PropertyRef Name="EmployerID" />
+            </Principal>
+            <Dependent Role="SelectedEmployee">
+              <PropertyRef Name="EmployerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SetKeywordsPopularity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Keyowrds" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="JobRepoModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="JobRepoDataContext" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="SetKeywordsPopularity">
+          <Parameter Name="Keyowrds" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="Cities" EntityType="JobRepoModel.City" />
+          <EntitySet Name="Countries" EntityType="JobRepoModel.Country" />
+          <EntitySet Name="Employees" EntityType="JobRepoModel.Employee" />
+          <EntitySet Name="Employers" EntityType="JobRepoModel.Employer" />
+          <EntitySet Name="Jobs" EntityType="JobRepoModel.Job" />
+          <EntitySet Name="JobTypes" EntityType="JobRepoModel.JobType" />
+          <EntitySet Name="KeywordPopularities" EntityType="JobRepoModel.KeywordPopularity" />
+          <EntitySet Name="Locations" EntityType="JobRepoModel.Location" />
+          <EntitySet Name="Provinces" EntityType="JobRepoModel.Province" />
+          <EntitySet Name="Resumes" EntityType="JobRepoModel.Resume" />
+          <EntitySet Name="SelectedEmployees" EntityType="JobRepoModel.SelectedEmployee" />
+          <AssociationSet Name="FK_City_Province" Association="JobRepoModel.FK_City_Province">
+            <End Role="Province" EntitySet="Provinces" />
+            <End Role="City" EntitySet="Cities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_City" Association="JobRepoModel.FK_Location_City">
+            <End Role="City" EntitySet="Cities" />
+            <End Role="Location" EntitySet="Locations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_Country" Association="JobRepoModel.FK_Location_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Location" EntitySet="Locations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Province_Country" Association="JobRepoModel.FK_Province_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Province" EntitySet="Provinces" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resume_Employee" Association="JobRepoModel.FK_Resume_Employee">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Resume" EntitySet="Resumes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SelectedEmployee_Employee" Association="JobRepoModel.FK_SelectedEmployee_Employee">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="SelectedEmployee" EntitySet="SelectedEmployees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_Employer" Association="JobRepoModel.FK_Job_Employer">
+            <End Role="Employer" EntitySet="Employers" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SelectedEmployee_Employer" Association="JobRepoModel.FK_SelectedEmployee_Employer">
+            <End Role="Employer" EntitySet="Employers" />
+            <End Role="SelectedEmployee" EntitySet="SelectedEmployees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_JobType" Association="JobRepoModel.FK_Job_JobType">
+            <End Role="JobType" EntitySet="JobTypes" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_Location" Association="JobRepoModel.FK_Job_Location">
+            <End Role="Location" EntitySet="Locations" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Location_Province" Association="JobRepoModel.FK_Location_Province">
+            <End Role="Province" EntitySet="Provinces" />
+            <End Role="Location" EntitySet="Locations" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityID" />
+          </Key>
+          <Property Type="Int32" Name="CityID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ProvinceID" Nullable="false" />
+          <Property Type="String" Name="CityName" Nullable="false" MaxLength="70" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Province" Relationship="JobRepoModel.FK_City_Province" FromRole="City" ToRole="Province" />
+          <NavigationProperty Name="Locations" Relationship="JobRepoModel.FK_Location_City" FromRole="City" ToRole="Location" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="CountryID" />
+          </Key>
+          <Property Type="Int32" Name="CountryID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="CountryName" Nullable="false" MaxLength="70" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Locations" Relationship="JobRepoModel.FK_Location_Country" FromRole="Country" ToRole="Location" />
+          <NavigationProperty Name="Provinces" Relationship="JobRepoModel.FK_Province_Country" FromRole="Country" ToRole="Province" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Type="Int32" Name="EmployeeID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="UserID" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Phone" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="JobTitle" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Resumes" Relationship="JobRepoModel.FK_Resume_Employee" FromRole="Employee" ToRole="Resume" />
+          <NavigationProperty Name="SelectedEmployees" Relationship="JobRepoModel.FK_SelectedEmployee_Employee" FromRole="Employee" ToRole="SelectedEmployee" />
+        </EntityType>
+        <EntityType Name="Employer">
+          <Key>
+            <PropertyRef Name="EmployerID" />
+          </Key>
+          <Property Type="Int32" Name="EmployerID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="UserID" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Address" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Phone" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Fax" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="WebSite" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactName" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactEmail" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactPhone" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactMobile" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="Binary" Name="Logo" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Jobs" Relationship="JobRepoModel.FK_Job_Employer" FromRole="Employer" ToRole="Job" />
+          <NavigationProperty Name="SelectedEmployees" Relationship="JobRepoModel.FK_SelectedEmployee_Employer" FromRole="Employer" ToRole="SelectedEmployee" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="JobID" />
+          </Key>
+          <Property Type="Int32" Name="JobID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="EmployerID" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="PostedDate" Nullable="false" />
+          <Property Type="DateTime" Name="ValidFrom" Nullable="false" />
+          <Property Type="DateTime" Name="ValidTo" Nullable="false" />
+          <Property Type="String" Name="SalaryFrom" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SalaryTo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="JobTypeID" Nullable="false" />
+          <Property Type="Int32" Name="LocationID" Nullable="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Type="Int32" Name="JobAdvTypeID" Nullable="false" />
+          <Property Type="Int32" Name="Viewed" Nullable="false" />
+          <NavigationProperty Name="Employer" Relationship="JobRepoModel.FK_Job_Employer" FromRole="Job" ToRole="Employer" />
+          <NavigationProperty Name="JobType" Relationship="JobRepoModel.FK_Job_JobType" FromRole="Job" ToRole="JobType" />
+          <NavigationProperty Name="Location" Relationship="JobRepoModel.FK_Job_Location" FromRole="Job" ToRole="Location" />
+        </EntityType>
+        <EntityType Name="JobType">
+          <Key>
+            <PropertyRef Name="JobTypeID" />
+          </Key>
+          <Property Type="Int32" Name="JobTypeID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Description" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Jobs" Relationship="JobRepoModel.FK_Job_JobType" FromRole="JobType" ToRole="Job" />
+        </EntityType>
+        <EntityType Name="KeywordPopularity">
+          <Key>
+            <PropertyRef Name="KeywordPopularityID" />
+          </Key>
+          <Property Type="Int32" Name="KeywordPopularityID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Keyword" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Count" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationID" />
+          </Key>
+          <Property Type="Int32" Name="LocationID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="CountryID" Nullable="false" />
+          <Property Type="Int32" Name="ProvinceID" Nullable="false" />
+          <Property Type="Int32" Name="CityID" Nullable="false" />
+          <Property Type="String" Name="PostCode" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="City" Relationship="JobRepoModel.FK_Location_City" FromRole="Location" ToRole="City" />
+          <NavigationProperty Name="Country" Relationship="JobRepoModel.FK_Location_Country" FromRole="Location" ToRole="Country" />
+          <NavigationProperty Name="Jobs" Relationship="JobRepoModel.FK_Job_Location" FromRole="Location" ToRole="Job" />
+          <NavigationProperty Name="Province" Relationship="JobRepoModel.FK_Location_Province" FromRole="Location" ToRole="Province" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="ProvinceID" />
+          </Key>
+          <Property Type="Int32" Name="ProvinceID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="CountryID" Nullable="false" />
+          <Property Type="String" Name="ProvinceName" Nullable="false" MaxLength="70" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Cities" Relationship="JobRepoModel.FK_City_Province" FromRole="Province" ToRole="City" />
+          <NavigationProperty Name="Country" Relationship="JobRepoModel.FK_Province_Country" FromRole="Province" ToRole="Country" />
+          <NavigationProperty Name="Locations" Relationship="JobRepoModel.FK_Location_Province" FromRole="Province" ToRole="Location" />
+        </EntityType>
+        <EntityType Name="Resume">
+          <Key>
+            <PropertyRef Name="ResumeID" />
+          </Key>
+          <Property Type="Int32" Name="ResumeID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="EmployeeID" Nullable="false" />
+          <Property Type="String" Name="Keywords" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Type="Binary" Name="Description" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Type="DateTime" Name="PostedDate" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="JobRepoModel.FK_Resume_Employee" FromRole="Resume" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="SelectedEmployee">
+          <Key>
+            <PropertyRef Name="SelectedEmployeeID" />
+          </Key>
+          <Property Type="Int32" Name="SelectedEmployeeID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="EmployerID" Nullable="false" />
+          <Property Type="Int32" Name="EmployeeID" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="JobRepoModel.FK_SelectedEmployee_Employee" FromRole="SelectedEmployee" ToRole="Employee" />
+          <NavigationProperty Name="Employer" Relationship="JobRepoModel.FK_SelectedEmployee_Employer" FromRole="SelectedEmployee" ToRole="Employer" />
+        </EntityType>
+        <Association Name="FK_City_Province">
+          <End Type="JobRepoModel.Province" Role="Province" Multiplicity="1" />
+          <End Type="JobRepoModel.City" Role="City" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ProvinceID" />
+            </Principal>
+            <Dependent Role="City">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_City">
+          <End Type="JobRepoModel.City" Role="City" Multiplicity="1" />
+          <End Type="JobRepoModel.Location" Role="Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="CityID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="CityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_Country">
+          <End Type="JobRepoModel.Country" Role="Country" Multiplicity="1" />
+          <End Type="JobRepoModel.Location" Role="Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="CountryID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="CountryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Province_Country">
+          <End Type="JobRepoModel.Country" Role="Country" Multiplicity="1" />
+          <End Type="JobRepoModel.Province" Role="Province" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="CountryID" />
+            </Principal>
+            <Dependent Role="Province">
+              <PropertyRef Name="CountryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resume_Employee">
+          <End Type="JobRepoModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="JobRepoModel.Resume" Role="Resume" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="Resume">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SelectedEmployee_Employee">
+          <End Type="JobRepoModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="JobRepoModel.SelectedEmployee" Role="SelectedEmployee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="SelectedEmployee">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_Employer">
+          <End Type="JobRepoModel.Employer" Role="Employer" Multiplicity="1" />
+          <End Type="JobRepoModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employer">
+              <PropertyRef Name="EmployerID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="EmployerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SelectedEmployee_Employer">
+          <End Type="JobRepoModel.Employer" Role="Employer" Multiplicity="1" />
+          <End Type="JobRepoModel.SelectedEmployee" Role="SelectedEmployee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employer">
+              <PropertyRef Name="EmployerID" />
+            </Principal>
+            <Dependent Role="SelectedEmployee">
+              <PropertyRef Name="EmployerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_JobType">
+          <End Type="JobRepoModel.JobType" Role="JobType" Multiplicity="1" />
+          <End Type="JobRepoModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobType">
+              <PropertyRef Name="JobTypeID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="JobTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_Location">
+          <End Type="JobRepoModel.Location" Role="Location" Multiplicity="1" />
+          <End Type="JobRepoModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Location">
+              <PropertyRef Name="LocationID" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="LocationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Location_Province">
+          <End Type="JobRepoModel.Province" Role="Province" Multiplicity="1" />
+          <End Type="JobRepoModel.Location" Role="Location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Province">
+              <PropertyRef Name="ProvinceID" />
+            </Principal>
+            <Dependent Role="Location">
+              <PropertyRef Name="ProvinceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="JobRepoModelStoreContainer" CdmEntityContainer="JobRepoDataContext">
+          <FunctionImportMapping FunctionImportName="SetKeywordsPopularity" FunctionName="JobRepoModel.Store.SetKeywordsPopularity" />
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="JobRepoModel.City">
+              <MappingFragment StoreEntitySet="City">
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="JobRepoModel.Country">
+              <MappingFragment StoreEntitySet="Country">
+                <ScalarProperty Name="CountryName" ColumnName="CountryName" />
+                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="JobRepoModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employers">
+            <EntityTypeMapping TypeName="JobRepoModel.Employer">
+              <MappingFragment StoreEntitySet="Employer">
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="ContactMobile" ColumnName="ContactMobile" />
+                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+                <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="EmployerID" ColumnName="EmployerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Jobs">
+            <EntityTypeMapping TypeName="JobRepoModel.Job">
+              <MappingFragment StoreEntitySet="Job">
+                <ScalarProperty Name="Viewed" ColumnName="Viewed" />
+                <ScalarProperty Name="JobAdvTypeID" ColumnName="JobAdvTypeID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="JobTypeID" ColumnName="JobTypeID" />
+                <ScalarProperty Name="SalaryTo" ColumnName="SalaryTo" />
+                <ScalarProperty Name="SalaryFrom" ColumnName="SalaryFrom" />
+                <ScalarProperty Name="ValidTo" ColumnName="ValidTo" />
+                <ScalarProperty Name="ValidFrom" ColumnName="ValidFrom" />
+                <ScalarProperty Name="PostedDate" ColumnName="PostedDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="EmployerID" ColumnName="EmployerID" />
+                <ScalarProperty Name="JobID" ColumnName="JobID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobTypes">
+            <EntityTypeMapping TypeName="JobRepoModel.JobType">
+              <MappingFragment StoreEntitySet="JobType">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="JobTypeID" ColumnName="JobTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KeywordPopularities">
+            <EntityTypeMapping TypeName="JobRepoModel.KeywordPopularity">
+              <MappingFragment StoreEntitySet="KeywordPopularity">
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="KeywordPopularityID" ColumnName="KeywordPopularityID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Locations">
+            <EntityTypeMapping TypeName="JobRepoModel.Location">
+              <MappingFragment StoreEntitySet="Location">
+                <ScalarProperty Name="PostCode" ColumnName="PostCode" />
+                <ScalarProperty Name="CityID" ColumnName="CityID" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Provinces">
+            <EntityTypeMapping TypeName="JobRepoModel.Province">
+              <MappingFragment StoreEntitySet="Province">
+                <ScalarProperty Name="ProvinceName" ColumnName="ProvinceName" />
+                <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+                <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resumes">
+            <EntityTypeMapping TypeName="JobRepoModel.Resume">
+              <MappingFragment StoreEntitySet="Resume">
+                <ScalarProperty Name="PostedDate" ColumnName="PostedDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Keywords" ColumnName="Keywords" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="ResumeID" ColumnName="ResumeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SelectedEmployees">
+            <EntityTypeMapping TypeName="JobRepoModel.SelectedEmployee">
+              <MappingFragment StoreEntitySet="SelectedEmployee">
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="EmployerID" ColumnName="EmployerID" />
+                <ScalarProperty Name="SelectedEmployeeID" ColumnName="SelectedEmployeeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="JobRepo" ZoomLevel="88">
+        <EntityTypeShape EntityType="JobRepoModel.City" Width="1.5" PointX="5.25" PointY="7.5" Height="1.9802864583333388" />
+        <EntityTypeShape EntityType="JobRepoModel.Country" Width="1.5" PointX="0.75" PointY="4.125" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="JobRepoModel.Employee" Width="1.5" PointX="7.5" PointY="12.375" Height="2.749492187499996" />
+        <EntityTypeShape EntityType="JobRepoModel.Employer" Width="1.5" PointX="7.5" PointY="0.75" Height="3.903300781249996" />
+        <EntityTypeShape EntityType="JobRepoModel.Job" Width="1.5" PointX="9.75" PointY="4.75" Height="4.2879036458333388" />
+        <EntityTypeShape EntityType="JobRepoModel.JobType" Width="1.5" PointX="7.5" PointY="9.375" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="JobRepoModel.KeywordPopularity" Width="1.5" PointX="0.75" PointY="1" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="JobRepoModel.Location" Width="1.5" PointX="7.5" PointY="5.5" Height="2.7494921875000031" />
+        <EntityTypeShape EntityType="JobRepoModel.Province" Width="1.5" PointX="3" PointY="7.5" Height="2.1725878906250031" />
+        <EntityTypeShape EntityType="JobRepoModel.Resume" Width="1.5" PointX="9.75" PointY="12.5" Height="2.3648893229166674" />
+        <EntityTypeShape EntityType="JobRepoModel.SelectedEmployee" Width="1.5" PointX="9.75" PointY="1.75" Height="1.9802864583333388" />
+        <AssociationConnector Association="JobRepoModel.FK_City_Province" >
+          <ConnectorPoint PointX="4.5" PointY="8.49014322916667" />
+          <ConnectorPoint PointX="5.25" PointY="8.49014322916667" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Location_City" >
+          <ConnectorPoint PointX="6.75" PointY="7.8747460937500016" />
+          <ConnectorPoint PointX="7.5" PointY="7.8747460937500016" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Location_Country" >
+          <ConnectorPoint PointX="2.25" PointY="5.7064925130208337" />
+          <ConnectorPoint PointX="7.5" PointY="5.7064925130208337" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Province_Country" >
+          <ConnectorPoint PointX="1.5" PointY="5.9129850260416674" />
+          <ConnectorPoint PointX="1.5" PointY="8.5862939453125016" />
+          <ConnectorPoint PointX="3" PointY="8.5862939453125016" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Resume_Employee" >
+          <ConnectorPoint PointX="9" PointY="13.682444661458334" />
+          <ConnectorPoint PointX="9.75" PointY="13.682444661458334" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_SelectedEmployee_Employee" >
+          <ConnectorPoint PointX="9" PointY="12.375" />
+          <ConnectorPoint PointX="9.375" PointY="12" />
+          <ConnectorPoint PointX="9.375" PointY="2.7401432291666694" />
+          <ConnectorPoint PointX="9.75" PointY="2.7401432291666694" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Job_Employer" >
+          <ConnectorPoint PointX="9" PointY="4.5898382427884572" />
+          <ConnectorPoint PointX="9.3160744349011217" PointY="4.9059126776895781" />
+          <ConnectorPoint PointX="9.4339255650988783" PointY="5.0237638078873363" />
+          <ConnectorPoint PointX="9.5625" PointY="5.1523382427884572" />
+          <ConnectorPoint PointX="9.5625" PointY="4.5625" />
+          <ConnectorPoint PointX="9.75" PointY="4.75" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_SelectedEmployee_Employer" >
+          <ConnectorPoint PointX="9" PointY="2.1825716145833347" />
+          <ConnectorPoint PointX="9.75" PointY="2.1825716145833347" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Job_JobType" >
+          <ConnectorPoint PointX="9" PointY="10.172841796875002" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="10.172841796875002" />
+          <ConnectorPoint PointX="9.4583333333333339" PointY="10.172841796875002" />
+          <ConnectorPoint PointX="10.5" PointY="10.172841796875002" />
+          <ConnectorPoint PointX="10.5" PointY="9.0379036458333388" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Job_Location" >
+          <ConnectorPoint PointX="9" PointY="6.8747460937500016" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="6.8747460937500007" />
+          <ConnectorPoint PointX="9.4583333333333339" PointY="6.8747460937500016" />
+          <ConnectorPoint PointX="9.75" PointY="6.8747460937500016" />
+        </AssociationConnector>
+        <AssociationConnector Association="JobRepoModel.FK_Location_Province" >
+          <ConnectorPoint PointX="3.75" PointY="7.5" />
+          <ConnectorPoint PointX="3.75" PointY="6.63449825651041" />
+          <ConnectorPoint PointX="7.5" PointY="6.63449825651041" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
