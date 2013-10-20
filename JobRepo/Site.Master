@@ -1,0 +1,87 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/SiteUnauthenticated.Master" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="JobRepo.Site" %>
+
+<%@ Register Src="User_Controls/Top10Job.ascx" TagName="Top10Job" TagPrefix="jobepo" %>
+<%@ Register Src="User_Controls/SelectJob.ascx" TagName="SelectJob" TagPrefix="jobepo" %>
+<%@ Register Src="~/User_Controls/DesignGuide.ascx" TagName="DesignGuide" TagPrefix="DG" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <%--                       
+--%>
+    <asp:WebPartManager ID="WebPartManager1" runat="server" > 
+    <Personalization InitialScope="Shared" Enabled="True" />
+
+        <StaticConnections>
+            <asp:WebPartConnection ID="WebPartConnection1" ProviderID="SelectJob1" ProviderConnectionPointID="GetJobName"
+                ConsumerID="Top10Job2" ConsumerConnectionPointID="GetSelectedJob" />
+        </StaticConnections>
+    </asp:WebPartManager>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            <div style="border-style: solid; border-width: thin">
+    <table>
+        <tr>
+            <td>
+                <asp:WebPartZone ID="Search" runat="server" Style="width: 100%; float: right;
+                    height: 200px;" HeaderText="Top 10 Jobs" BorderColor="#CCCCCC" Font-Names="Verdana"
+                    Padding="6">
+                    <CloseVerb Visible="false" />
+                    <ZoneTemplate>
+                        <jobepo:selectjob id="SelectJob1" runat="server" title="Top 10 Jobs Of The Month" />
+                    </ZoneTemplate>
+                    <MenuLabelHoverStyle ForeColor="#E2DED6" />
+                    <MenuLabelStyle ForeColor="White" />
+                    <MenuPopupStyle BackColor="#5D7B9D" BorderColor="#CCCCCC" BorderWidth="1px" Font-Names="Verdana"
+                        Font-Size="0.6em" />
+                    <MenuVerbHoverStyle BackColor="#F7F6F3" BorderColor="#CCCCCC" BorderStyle="Solid"
+                        BorderWidth="1px" ForeColor="#333333" />
+                    <MenuVerbStyle BorderColor="#5D7B9D" BorderStyle="Solid" BorderWidth="1px" ForeColor="White" />
+                    <TitleBarVerbStyle Font-Size="0.6em" Font-Underline="False" ForeColor="White" />
+                    <EmptyZoneTextStyle Font-Size="0.8em" />
+                    <HeaderStyle Font-Size="0.7em" ForeColor="#CCCCCC" HorizontalAlign="Center" />
+                    <PartChromeStyle BackColor="#F7F6F3" BorderColor="#E2DED6" Font-Names="Verdana" ForeColor="White" />
+                    <PartStyle Font-Size="0.8em" ForeColor="#333333" />
+                    <PartTitleStyle BackColor="#5D7B9D" Font-Bold="True" Font-Size="0.8em" ForeColor="White" />
+                </asp:WebPartZone>
+
+
+            </td>
+            <td>
+                <asp:WebPartZone ID="Jobs" runat="server" Style="width: 100%; float: right;
+                    height: 200px;" BorderColor="#CCCCCC" HeaderText="Top 10 Jobs"  Font-Names="Verdana" Padding="6">
+                        <CloseVerb Visible="false" />
+                        <MenuLabelHoverStyle ForeColor="#E2DED6" />
+                    <MenuLabelStyle ForeColor="White" />
+                    <MenuPopupStyle BackColor="#5D7B9D" BorderColor="#CCCCCC" BorderWidth="1px" Font-Names="Verdana"
+                        Font-Size="0.6em" />
+                    <MenuVerbHoverStyle BackColor="#F7F6F3" BorderColor="#CCCCCC" BorderStyle="Solid"
+                        BorderWidth="1px" ForeColor="#333333" />
+                    <MenuVerbStyle BorderColor="#5D7B9D" BorderStyle="Solid" BorderWidth="1px" ForeColor="White" />
+                    <TitleBarVerbStyle Font-Size="0.6em" Font-Underline="False" ForeColor="White" />
+                    <EmptyZoneTextStyle Font-Size="0.8em" />
+                    <HeaderStyle Font-Bold="True" Font-Size="0.7em" ForeColor="#CCCCCC" HorizontalAlign="Center">
+                    </HeaderStyle>
+                    <ZoneTemplate>
+                        <jobepo:top10job id="Top10Job2" runat="server" title="Top 10 Jobs Of The Month" />
+
+                    </ZoneTemplate>
+                    <PartChromeStyle BackColor="#F7F6F3" BorderColor="#E2DED6" Font-Names="Verdana" ForeColor="White" />
+                    <PartStyle Font-Size="0.8em" ForeColor="#333333" />
+                    <PartTitleStyle BackColor="#5D7B9D" Font-Bold="True" Font-Size="0.8em" ForeColor="White" />
+                    
+                </asp:WebPartZone>
+            </td>
+        </tr>
+        <tr>
+        <td>
+                <DG:DesignGuide ID="desgingd" runat="server" HTMLPageName="JobAdv.html" />
+                &nbsp;
+</td>
+        </tr>
+    </table>
+   </div>
+</asp:Content>

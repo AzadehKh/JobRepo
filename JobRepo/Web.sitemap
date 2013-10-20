@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="~/JobRepoHome.aspx" title="JobRepo" description="">
+    <siteMapNode url="~/Default.aspx" title="Home" description="" />
+    <siteMapNode url="" title="Employer" description="">
+        <siteMapNode url="~/EmployerProfile.aspx" title="My Profile" description=""/>
+        <siteMapNode url="~/JobList.aspx" title="My Jobs" description=""/>
+        <siteMapNode url="~/JobAdv.aspx" title="View Job Advertisements" description=""/>
+        <siteMapNode url="~/Employer/SeekEmployee" title="Employee Search" description=""/>
+        <siteMapNode url="~/SelectedEmployee/List" title="Selected Employee(s)" description=""/>
+    </siteMapNode>
+    <siteMapNode url="" title="Job Seeker" description="">
+      <siteMapNode url="~/JobSearch.aspx" title="Job Search"  description="" />
+      <siteMapNode url="~/JobSeeker/CreateProfile" title="My Profile"  description="" />
+      <siteMapNode url="~/JobSeeker/ManageResumes" title="My Resumes"  description="" />
+    </siteMapNode>
+    <siteMapNode url="" title="Statistics" description="">
+      <siteMapNode url="~/PopularityViewer.aspx" title="Keyword Popularity(1)"  description="" />
+      <siteMapNode url="~/KeywordPopularity/KeywordPopularity" title="Keyword Popularity(2)"  description="" />
+      <siteMapNode url="~/SalarySurvey.aspx" title="Salary Survey"  description="" />
+    </siteMapNode>
+    <siteMapNode url="" title="My Account" description="">
+      <siteMapNode url="~/Account/Login.aspx" title="Login"  description="" />
+      <siteMapNode url="~/Account/ChangePassword.aspx" title="Change Password"  description="" />
+    </siteMapNode>
+    <siteMapNode url="~/Administration/Console.aspx" title="Administration"  description="" />
+    <siteMapNode url="~/About.aspx" title="About"  description="" />
+  </siteMapNode>
+
+</siteMap>

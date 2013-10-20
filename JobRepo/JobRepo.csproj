@@ -1,0 +1,957 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BAA9D208-32C3-477F-9449-8E901E50A894}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JobRepo</RootNamespace>
+    <AssemblyName>JobRepo</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>true</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit">
+      <HintPath>packages\Libraries\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>packages\Libraries\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqKit">
+      <HintPath>packages\Libraries\LinqKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc">
+      <HintPath>packages\Mvc3Futures.3.0.20105.0\lib\Microsoft.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcContrib">
+      <HintPath>packages\MvcContrib.Mvc3-ci.3.0.100.0\lib\MvcContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="SanitizerProviders">
+      <HintPath>packages\Libraries\SanitizerProviders.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.DynamicData.Design" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Helpers">
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor">
+      <HintPath>packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages">
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment">
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor">
+      <HintPath>packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="Unity.Mvc3">
+      <HintPath>packages\Unity.Mvc3.1.2\lib\net40\Unity.Mvc3.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionFilters\LoggedAsEmployeeActionFilter.cs" />
+    <Compile Include="ActionFilters\LoggedAsEmployerActionFilter.cs" />
+    <Compile Include="Binders\DateTimeModelBinder.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Common\IKeywordsPopularity.cs" />
+    <Compile Include="Common\JobRepoControllerFactory.cs" />
+    <Compile Include="Common\SQLServerKeywordsPopularity.cs" />
+    <Compile Include="Controllers\EmployerController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JobSeekerController.cs" />
+    <Compile Include="Controllers\KeywordPopularityController.cs" />
+    <Compile Include="Controllers\SelectedEmployeeController.cs" />
+    <Compile Include="Controls\FileUploadHelper.cs" />
+    <Compile Include="Model\EmployeeDTO.cs" />
+    <Compile Include="Model\EmployeeMetadata.cs" />
+    <Compile Include="Model\FileModel.cs" />
+    <Compile Include="Model\ResumeDTO.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IKeywordService.cs" />
+    <Compile Include="Services\KeywordService.svc.cs">
+      <DependentUpon>KeywordService.svc</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Administration\Scripts\clipboard.swf" />
+    <Content Include="Administration\Scripts\shAutoloader.js" />
+    <Content Include="Administration\Scripts\shBrushAppleScript.js" />
+    <Content Include="Administration\Scripts\shBrushAS3.js" />
+    <Content Include="Administration\Scripts\shBrushBash.js" />
+    <Content Include="Administration\Scripts\shBrushColdFusion.js" />
+    <Content Include="Administration\Scripts\shBrushCpp.js" />
+    <Content Include="Administration\Scripts\shBrushCSharp.js" />
+    <Content Include="Administration\Scripts\shBrushCss.js" />
+    <Content Include="Administration\Scripts\shBrushDelphi.js" />
+    <Content Include="Administration\Scripts\shBrushDiff.js" />
+    <Content Include="Administration\Scripts\shBrushErlang.js" />
+    <Content Include="Administration\Scripts\shBrushGroovy.js" />
+    <Content Include="Administration\Scripts\shBrushJava.js" />
+    <Content Include="Administration\Scripts\shBrushJavaFX.js" />
+    <Content Include="Administration\Scripts\shBrushJScript.js" />
+    <Content Include="Administration\Scripts\shBrushPerl.js" />
+    <Content Include="Administration\Scripts\shBrushPhp.js" />
+    <Content Include="Administration\Scripts\shBrushPlain.js" />
+    <Content Include="Administration\Scripts\shBrushPowerShell.js" />
+    <Content Include="Administration\Scripts\shBrushPython.js" />
+    <Content Include="Administration\Scripts\shBrushRuby.js" />
+    <Content Include="Administration\Scripts\shBrushSass.js" />
+    <Content Include="Administration\Scripts\shBrushScala.js" />
+    <Content Include="Administration\Scripts\shBrushSql.js" />
+    <Content Include="Administration\Scripts\shBrushVb.js" />
+    <Content Include="Administration\Scripts\shBrushXml.js" />
+    <Content Include="Administration\Scripts\shCore.js" />
+    <Content Include="Administration\Scripts\shLegacy.js" />
+    <Content Include="Administration\Styles\shCore.css" />
+    <Content Include="Administration\Styles\shCoreDefault.css" />
+    <Content Include="Administration\Styles\shCoreDjango.css" />
+    <Content Include="Administration\Styles\shCoreEclipse.css" />
+    <Content Include="Administration\Styles\shCoreEmacs.css" />
+    <Content Include="Administration\Styles\shCoreFadeToGrey.css" />
+    <Content Include="Administration\Styles\shCoreMDUltra.css" />
+    <Content Include="Administration\Styles\shCoreMidnight.css" />
+    <Content Include="Administration\Styles\shCoreRDark.css" />
+    <Content Include="Administration\Styles\shThemeDefault.css" />
+    <Content Include="Administration\Styles\shThemeDjango.css" />
+    <Content Include="Administration\Styles\shThemeEclipse.css" />
+    <Content Include="Administration\Styles\shThemeEmacs.css" />
+    <Content Include="Administration\Styles\shThemeFadeToGrey.css" />
+    <Content Include="Administration\Styles\shThemeMDUltra.css" />
+    <Content Include="Administration\Styles\shThemeMidnight.css" />
+    <Content Include="Administration\Styles\shThemeRDark.css" />
+    <Content Include="Administration\Styles\SyntaxHighlighter.css" />
+    <Content Include="App_Data\aspnetdb.mdf" />
+    <Content Include="App_Data\aspnetdb_log.ldf">
+      <DependentUpon>aspnetdb.mdf</DependentUpon>
+    </Content>
+    <Content Include="App_Data\JobRepo.mdf" />
+    <Content Include="App_Data\JobRepo_log.ldf">
+      <DependentUpon>JobRepo.mdf</DependentUpon>
+    </Content>
+    <Content Include="Content\busyindicator.gif" />
+    <Content Include="Content\demo_table.css" />
+    <Content Include="Content\demo_table_jui.css" />
+    <Content Include="Content\jquery.dataTables.css" />
+    <Content Include="Documents\About.html" />
+    <Content Include="Documents\ASP.NET Dynamic Data.html" />
+    <Content Include="Documents\ASP.NET%28HTML%29 Tags.html" />
+    <Content Include="Documents\Authentication and Authorisation.html" />
+    <Content Include="Documents\Caching.html" />
+    <Content Include="Documents\Custom Error Page.html" />
+    <Content Include="Documents\EmployerProfile.html" />
+    <Content Include="Documents\JobEditor.html" />
+    <Content Include="Documents\JobList.html" />
+    <Content Include="Documents\JobRepo Known Issues.html" />
+    <Content Include="Documents\KeywordsPopularityRESTService.html" />
+    <Content Include="Documents\Other.html" />
+    <Content Include="Documents\SalarySurveyWCFSOAPService.html" />
+    <Content Include="Documents\SearchJob.html" />
+    <Content Include="Documents\TopTenWcfDataService.html" />
+    <Content Include="Documents\Web Part.html" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\JobSeeker-Profile-ClientValidator.js" />
+    <Content Include="Scripts\jquery-1.7.min.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Scripts\KeywordPopularity.js" />
+    <Content Include="Scripts\SelectedEmployeeList.js" />
+    <None Include="Service References\SalarySurveyRef\SalarySurveyService.wsdl" />
+    <None Include="Service References\SalarySurveyRef\SalarySurveyWCFSOAPService.disco" />
+    <Content Include="Services\KeywordService.svc" />
+    <Content Include="Unity.Mvc3.README.txt" />
+    <Content Include="Views\JobSeeker\EmployeeDetails.aspx" />
+    <Content Include="Views\Employer\EmployeeDetailPartial.ascx" />
+    <Content Include="Views\Employer\SeekEmployee.aspx" />
+    <Content Include="Views\JobSeeker\ManageResumes.aspx" />
+    <Content Include="Views\JobSeeker\CreateProfile.aspx" />
+    <Content Include="Views\JobSeeker\Profile.aspx" />
+    <Content Include="Views\JobSeeker\UpdateProfile.aspx" />
+    <Content Include="Views\JobSeeker\UploadResume.aspx" />
+    <Content Include="Views\KeywordPopularity\KeywordPopularity.aspx" />
+    <Content Include="Views\KeywordPopularity\_AJAXEnabledServicedKeywordCount.ascx" />
+    <Content Include="Views\SelectedEmployee\List.aspx" />
+    <Content Include="Views\SelectedEmployee\_AjaxEnabledSelectedEmployee.ascx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\MicrosoftAjax.js" />
+    <Content Include="Scripts\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Shared\LogOnUserControl.ascx" />
+    <Content Include="Views\Shared\Site.Master" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="About.aspx" />
+    <Content Include="Account\ChangePassword.aspx" />
+    <Content Include="Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Account\Login.aspx" />
+    <Content Include="Account\Register.aspx" />
+    <Content Include="Administration\Console.aspx" />
+    <Content Include="Administration\DynamicData\Content\GridViewPager.ascx" />
+    <Content Include="Administration\DynamicData\Content\Images\Back.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\header_back.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\PgFirst.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\PgLast.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\PgNext.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\PgPrev.gif" />
+    <Content Include="Administration\DynamicData\Content\Images\plus.gif" />
+    <Content Include="Administration\DynamicData\EntityTemplates\Default.ascx" />
+    <Content Include="Administration\DynamicData\EntityTemplates\Default_Edit.ascx" />
+    <Content Include="Administration\DynamicData\EntityTemplates\Default_Insert.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Boolean.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Boolean_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Children.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Children_Insert.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\DateTime.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\DateTime_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Decimal_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\EmailAddress.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Enumeration.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Enumeration_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\ForeignKey.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\ForeignKey_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Integer_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\ManyToMany.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\ManyToMany_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\MultilineText_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Text.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Text_Edit.ascx" />
+    <Content Include="Administration\DynamicData\FieldTemplates\Url.ascx" />
+    <Content Include="Administration\DynamicData\Filters\Boolean.ascx" />
+    <Content Include="Administration\DynamicData\Filters\Enumeration.ascx" />
+    <Content Include="Administration\DynamicData\Filters\ForeignKey.ascx" />
+    <Content Include="Administration\DynamicData\PageTemplates\Details.aspx" />
+    <Content Include="Administration\DynamicData\PageTemplates\Edit.aspx" />
+    <Content Include="Administration\DynamicData\PageTemplates\Insert.aspx" />
+    <Content Include="Administration\DynamicData\PageTemplates\List.aspx" />
+    <Content Include="Administration\DynamicData\PageTemplates\ListDetails.aspx" />
+    <Content Include="App_Data\JobAdvType.xml" />
+    <Content Include="Default.aspx" />
+    <Content Include="Documents\index.html" />
+    <Content Include="Documents\JobAdv.html" />
+    <Content Include="Documents\Scripts\clipboard.swf" />
+    <Content Include="Documents\Scripts\shAutoloader.js" />
+    <Content Include="Documents\Scripts\shBrushAppleScript.js" />
+    <Content Include="Documents\Scripts\shBrushAS3.js" />
+    <Content Include="Documents\Scripts\shBrushBash.js" />
+    <Content Include="Documents\Scripts\shBrushColdFusion.js" />
+    <Content Include="Documents\Scripts\shBrushCpp.js" />
+    <Content Include="Documents\Scripts\shBrushCSharp.js" />
+    <Content Include="Documents\Scripts\shBrushCss.js" />
+    <Content Include="Documents\Scripts\shBrushDelphi.js" />
+    <Content Include="Documents\Scripts\shBrushDiff.js" />
+    <Content Include="Documents\Scripts\shBrushErlang.js" />
+    <Content Include="Documents\Scripts\shBrushGroovy.js" />
+    <Content Include="Documents\Scripts\shBrushJava.js" />
+    <Content Include="Documents\Scripts\shBrushJavaFX.js" />
+    <Content Include="Documents\Scripts\shBrushJScript.js" />
+    <Content Include="Documents\Scripts\shBrushPerl.js" />
+    <Content Include="Documents\Scripts\shBrushPhp.js" />
+    <Content Include="Documents\Scripts\shBrushPlain.js" />
+    <Content Include="Documents\Scripts\shBrushPowerShell.js" />
+    <Content Include="Documents\Scripts\shBrushPython.js" />
+    <Content Include="Documents\Scripts\shBrushRuby.js" />
+    <Content Include="Documents\Scripts\shBrushSass.js" />
+    <Content Include="Documents\Scripts\shBrushScala.js" />
+    <Content Include="Documents\Scripts\shBrushSql.js" />
+    <Content Include="Documents\Scripts\shBrushVb.js" />
+    <Content Include="Documents\Scripts\shBrushXml.js" />
+    <Content Include="Documents\Scripts\shCore.js" />
+    <Content Include="Documents\Scripts\shLegacy.js" />
+    <Content Include="Documents\Styles\shCore.css" />
+    <Content Include="Documents\Styles\shCoreDefault.css" />
+    <Content Include="Documents\Styles\shCoreDjango.css" />
+    <Content Include="Documents\Styles\shCoreEclipse.css" />
+    <Content Include="Documents\Styles\shCoreEmacs.css" />
+    <Content Include="Documents\Styles\shCoreFadeToGrey.css" />
+    <Content Include="Documents\Styles\shCoreMDUltra.css" />
+    <Content Include="Documents\Styles\shCoreMidnight.css" />
+    <Content Include="Documents\Styles\shCoreRDark.css" />
+    <Content Include="Documents\Styles\shThemeDefault.css" />
+    <Content Include="Documents\Styles\shThemeDjango.css" />
+    <Content Include="Documents\Styles\shThemeEclipse.css" />
+    <Content Include="Documents\Styles\shThemeEmacs.css" />
+    <Content Include="Documents\Styles\shThemeFadeToGrey.css" />
+    <Content Include="Documents\Styles\shThemeMDUltra.css" />
+    <Content Include="Documents\Styles\shThemeMidnight.css" />
+    <Content Include="Documents\Styles\shThemeRDark.css" />
+    <Content Include="Documents\Styles\SyntaxHighlighter.css" />
+    <Content Include="Error.aspx" />
+    <Content Include="JobRepoHome.aspx" />
+    <Content Include="JobReviewer.aspx" />
+    <Content Include="EmployerProfile.aspx" />
+    <Content Include="JobEditor.aspx" />
+    <Content Include="JobList.aspx" />
+    <Content Include="JobSearch.aspx" />
+    <Content Include="PopularityViewer.aspx" />
+    <Content Include="PopularityViewer.xslt" />
+    <Content Include="SalarySurvey.aspx" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\jquery-blink.js" />
+    <Content Include="Scripts\jquery.tmpl.js" />
+    <Content Include="Scripts\PasswordStrengthValidationComponent.js" />
+    <Content Include="Scripts\PasswordValidator.js" />
+    <None Include="Service References\SalarySurveyRef\JobRepo.SalarySurveyRef.SalarySurvey.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SalarySurveyRef\SalarySurveyWCFSOAPService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SalarySurveyRef\SalarySurveyWCFSOAPService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SalarySurveyRef\SalarySurveyWCFSOAPService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TopTenWcfDataServiceRef\Reference.datasvcmap">
+      <Generator>DataServiceClientGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\SalarySurveyRef\configuration91.svcinfo" />
+    <None Include="Service References\SalarySurveyRef\configuration.svcinfo" />
+    <None Include="Service References\SalarySurveyRef\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Services\SecurityCheckService.asmx" />
+    <Content Include="User_Controls\SelectJob.ascx" />
+    <Content Include="Administration\web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Services\KeywordsPopularityRESTServiceHost.svc" />
+    <Content Include="Services\TopTenWcfDataService.svc" />
+    <Content Include="Styles\Scripts\jquery-blink.js" />
+    <Content Include="Styles\Scripts\jquery.tmpl.js" />
+    <Content Include="Styles\Scripts\JScript.js" />
+    <Content Include="Styles\Scripts\PasswordStrengthValidationComponent.js" />
+    <Content Include="Styles\Scripts\PasswordValidator.js" />
+    <Content Include="Services\UserNameValidationService.asmx" />
+    <Content Include="Styles\CustomStyleSheet.css" />
+    <Content Include="Styles\Site.css" />
+    <Content Include="Styles\Default.aspx" />
+    <Content Include="Styles\Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Styles\Scripts\jquery-1.4.1.js" />
+    <Content Include="Styles\Scripts\jquery-1.4.1.min.js" />
+    <Content Include="User_Controls\DesignGuide.ascx" />
+    <EmbeddedResource Include="UserNameTextbox.js" />
+    <Content Include="User_Controls\Top10Job.ascx" />
+    <Content Include="JobAdv.aspx" />
+    <Content Include="Web.sitemap">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="SiteUnauthenticated.Master" />
+    <Content Include="Site.Master" />
+    <None Include="Service References\TopTenWcfDataServiceRef\service.edmx" />
+    <Content Include="Views\Shared\Independent.Site.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\ChangePasswordSuccess.aspx.cs">
+      <DependentUpon>ChangePasswordSuccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ChangePasswordSuccess.aspx.designer.cs">
+      <DependentUpon>ChangePasswordSuccess.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\Console.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Console.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\Console.aspx.designer.cs">
+      <DependentUpon>Console.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Content\GridViewPager.ascx.cs">
+      <DependentUpon>GridViewPager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Content\GridViewPager.ascx.designer.cs">
+      <DependentUpon>GridViewPager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default.ascx.cs">
+      <DependentUpon>Default.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default.ascx.designer.cs">
+      <DependentUpon>Default.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default_Edit.ascx.cs">
+      <DependentUpon>Default_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default_Edit.ascx.designer.cs">
+      <DependentUpon>Default_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default_Insert.ascx.cs">
+      <DependentUpon>Default_Insert.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\EntityTemplates\Default_Insert.ascx.designer.cs">
+      <DependentUpon>Default_Insert.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Boolean.ascx.cs">
+      <DependentUpon>Boolean.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Boolean.ascx.designer.cs">
+      <DependentUpon>Boolean.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Boolean_Edit.ascx.cs">
+      <DependentUpon>Boolean_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Boolean_Edit.ascx.designer.cs">
+      <DependentUpon>Boolean_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Children.ascx.cs">
+      <DependentUpon>Children.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Children.ascx.designer.cs">
+      <DependentUpon>Children.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Children_Insert.ascx.cs">
+      <DependentUpon>Children_Insert.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Children_Insert.ascx.designer.cs">
+      <DependentUpon>Children_Insert.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\DateTime.ascx.cs">
+      <DependentUpon>DateTime.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\DateTime.ascx.designer.cs">
+      <DependentUpon>DateTime.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\DateTime_Edit.ascx.cs">
+      <DependentUpon>DateTime_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\DateTime_Edit.ascx.designer.cs">
+      <DependentUpon>DateTime_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Decimal_Edit.ascx.cs">
+      <DependentUpon>Decimal_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Decimal_Edit.ascx.designer.cs">
+      <DependentUpon>Decimal_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\EmailAddress.ascx.cs">
+      <DependentUpon>EmailAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\EmailAddress.ascx.designer.cs">
+      <DependentUpon>EmailAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Enumeration.ascx.cs">
+      <DependentUpon>Enumeration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Enumeration.ascx.designer.cs">
+      <DependentUpon>Enumeration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Enumeration_Edit.ascx.cs">
+      <DependentUpon>Enumeration_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Enumeration_Edit.ascx.designer.cs">
+      <DependentUpon>Enumeration_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ForeignKey.ascx.cs">
+      <DependentUpon>ForeignKey.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ForeignKey.ascx.designer.cs">
+      <DependentUpon>ForeignKey.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ForeignKey_Edit.ascx.cs">
+      <DependentUpon>ForeignKey_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ForeignKey_Edit.ascx.designer.cs">
+      <DependentUpon>ForeignKey_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Integer_Edit.ascx.cs">
+      <DependentUpon>Integer_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Integer_Edit.ascx.designer.cs">
+      <DependentUpon>Integer_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ManyToMany.ascx.cs">
+      <DependentUpon>ManyToMany.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ManyToMany.ascx.designer.cs">
+      <DependentUpon>ManyToMany.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ManyToMany_Edit.ascx.cs">
+      <DependentUpon>ManyToMany_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\ManyToMany_Edit.ascx.designer.cs">
+      <DependentUpon>ManyToMany_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\MultilineText_Edit.ascx.cs">
+      <DependentUpon>MultilineText_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\MultilineText_Edit.ascx.designer.cs">
+      <DependentUpon>MultilineText_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Text.ascx.cs">
+      <DependentUpon>Text.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Text.ascx.designer.cs">
+      <DependentUpon>Text.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Text_Edit.ascx.cs">
+      <DependentUpon>Text_Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Text_Edit.ascx.designer.cs">
+      <DependentUpon>Text_Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Url.ascx.cs">
+      <DependentUpon>Url.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\FieldTemplates\Url.ascx.designer.cs">
+      <DependentUpon>Url.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\Boolean.ascx.cs">
+      <DependentUpon>Boolean.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\Boolean.ascx.designer.cs">
+      <DependentUpon>Boolean.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\Enumeration.ascx.cs">
+      <DependentUpon>Enumeration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\Enumeration.ascx.designer.cs">
+      <DependentUpon>Enumeration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\ForeignKey.ascx.cs">
+      <DependentUpon>ForeignKey.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\Filters\ForeignKey.ascx.designer.cs">
+      <DependentUpon>ForeignKey.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Details.aspx.cs">
+      <DependentUpon>Details.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Details.aspx.designer.cs">
+      <DependentUpon>Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Edit.aspx.cs">
+      <DependentUpon>Edit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Edit.aspx.designer.cs">
+      <DependentUpon>Edit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Insert.aspx.cs">
+      <DependentUpon>Insert.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\Insert.aspx.designer.cs">
+      <DependentUpon>Insert.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\List.aspx.cs">
+      <DependentUpon>List.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\List.aspx.designer.cs">
+      <DependentUpon>List.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\ListDetails.aspx.cs">
+      <DependentUpon>ListDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\DynamicData\PageTemplates\ListDetails.aspx.designer.cs">
+      <DependentUpon>ListDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Administration\Administration.master.cs">
+      <DependentUpon>Administration.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administration\Administration.master.designer.cs">
+      <DependentUpon>Administration.master</DependentUpon>
+    </Compile>
+    <Compile Include="Common.cs" />
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Error.aspx.cs">
+      <DependentUpon>Error.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Error.aspx.designer.cs">
+      <DependentUpon>Error.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="JobRepoHome.aspx.cs">
+      <DependentUpon>JobRepoHome.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobRepoHome.aspx.designer.cs">
+      <DependentUpon>JobRepoHome.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="JobReviewer.aspx.cs">
+      <DependentUpon>JobReviewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobReviewer.aspx.designer.cs">
+      <DependentUpon>JobReviewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\ImageHandler.ashx.cs">
+      <DependentUpon>ImageHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="JobEditor.aspx.cs">
+      <DependentUpon>JobEditor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobEditor.aspx.designer.cs">
+      <DependentUpon>JobEditor.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="JobList.aspx.cs">
+      <DependentUpon>JobList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobList.aspx.designer.cs">
+      <DependentUpon>JobList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="JobSearch.aspx.cs">
+      <DependentUpon>JobSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobSearch.aspx.designer.cs">
+      <DependentUpon>JobSearch.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\EmployeeProfileObject.cs" />
+    <Compile Include="Model\JobObject.cs" />
+    <Compile Include="Model\JobRepoModelExtended.cs" />
+    <Compile Include="Model\LocationObject.cs" />
+    <Compile Include="Model\PredicateBuilder.cs" />
+    <Compile Include="PopularityViewer.aspx.cs">
+      <DependentUpon>PopularityViewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PopularityViewer.aspx.designer.cs">
+      <DependentUpon>PopularityViewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProfileCommon.cs" />
+    <Compile Include="SalarySurvey.aspx.cs">
+      <DependentUpon>SalarySurvey.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SalarySurvey.aspx.designer.cs">
+      <DependentUpon>SalarySurvey.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\SalarySurveyRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\TopTenWcfDataServiceRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.datasvcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Services\KeywordsPopularityRESTService.cs" />
+    <Compile Include="Services\SecurityCheckService.asmx.cs">
+      <DependentUpon>SecurityCheckService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\TopTenWcfDataService.svc.cs">
+      <DependentUpon>TopTenWcfDataService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
+    <Compile Include="SiteUnauthenticated.Master.cs">
+      <DependentUpon>SiteUnauthenticated.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SiteUnauthenticated.Master.designer.cs">
+      <DependentUpon>SiteUnauthenticated.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Styles\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Styles\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployerProfile.aspx.cs">
+      <DependentUpon>EmployerProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployerProfile.aspx.designer.cs">
+      <DependentUpon>EmployerProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Model\EmployerProfileObject.cs" />
+    <Compile Include="Model\JobAdvTypeObject.cs" />
+    <Compile Include="Model\JobRepo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JobRepo.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\UserNameValidationService.asmx.cs">
+      <DependentUpon>UserNameValidationService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JobAdv.aspx.cs">
+      <DependentUpon>JobAdv.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobAdv.aspx.designer.cs">
+      <DependentUpon>JobAdv.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UserNameTextbox.cs" />
+    <Compile Include="User_Controls\DesignGuide.ascx.cs">
+      <DependentUpon>DesignGuide.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User_Controls\DesignGuide.ascx.designer.cs">
+      <DependentUpon>DesignGuide.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="User_Controls\SelectJob.ascx.cs">
+      <DependentUpon>SelectJob.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User_Controls\SelectJob.ascx.designer.cs">
+      <DependentUpon>SelectJob.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="User_Controls\Top10Job.ascx.cs">
+      <DependentUpon>Top10Job.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User_Controls\Top10Job.ascx.designer.cs">
+      <DependentUpon>Top10Job.ascx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Account\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Model\JobRepo.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>JobRepo.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Administration\DynamicData\CustomPages\" />
+    <Folder Include="Backup\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Administration\DynamicData\web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Administration\Administration.master" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Handlers\ImageHandler.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ServiceReferenceMetadataStorage Include="Service References\TopTenWcfDataServiceRef\">
+      <Type>datasvcmap</Type>
+    </ServiceReferenceMetadataStorage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\SalarySurveyRef\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>58873</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
