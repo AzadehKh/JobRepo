@@ -26,3 +26,6 @@ It is a Job Search engine which takes advantage of a wide variety of ASP.NET 4.0
 11. XML and XLST
 
 12. Web part and more
+
+
+Copyright © 2013 JobRepo - Zhinoo
